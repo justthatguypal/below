@@ -4,7 +4,6 @@ const path = require('path');
 const { spawn } = require('child_process');
 
 const PORT = process.env.PORT || 8080;
-const SUBDOMAIN = process.env.SUBDOMAIN || 'below-game-vr';
 const BASE_DIR = __dirname;
 const REPORTS_FILE = path.join(BASE_DIR, 'reports.json');
 const LOG_FILE = path.join(BASE_DIR, 'server.log');
@@ -37,7 +36,7 @@ const ipReportHistory = new Map();
 const COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 
 const server = http.createServer((req, res) => {
-    const clientIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+    const clientIP = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
 
     // Handle Report API endpoint
     if (req.method === 'POST' && req.url === '/api/report') {
@@ -62,7 +61,6 @@ const server = http.createServer((req, res) => {
                 report.receivedAt = new Date().toISOString();
                 report.clientIP = clientIP;
 
-                // Load existing reports
                 let reports = [];
                 if (fs.existsSync(REPORTS_FILE)) {
                     try { reports = JSON.parse(fs.readFileSync(REPORTS_FILE, 'utf8')); } catch (e) { reports = []; }
@@ -83,13 +81,14 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // Serve Static Files
+    // Serve Static Files with proper path handling on Windows
     if (req.method === 'GET') {
         let reqPath = req.url.split('?')[0];
         if (reqPath === '/' || reqPath === '') reqPath = '/index.html';
 
-        const safePath = path.normalize(reqPath).replace(/^(\.\.[\/\\])+/, '');
-        const filePath = path.join(BASE_DIR, safePath);
+        // Strip leading slashes to prevent Windows path.join drive-root misinterpretation
+        const cleanPath = reqPath.replace(/^[/\\]+/, '');
+        const filePath = path.join(BASE_DIR, cleanPath);
 
         fs.stat(filePath, (err, stats) => {
             if (err || !stats.isFile()) {
@@ -116,45 +115,45 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-    log(`Below Web Server is active on http://localhost:${PORT}`);
-    startTunnel();
+    log(`Below Server is active on http://localhost:${PORT}`);
+    startCloudflareTunnel();
 });
 
-// Launch persistent tunnel so the external URL doesn't change
-let tunnelProc = null;
-function startTunnel() {
-    log(`Connecting permanent tunnel for subdomain: ${SUBDOMAIN}...`);
+// Launch Cloudflare Tunnel (100% IP masked, no reminder screens)
+let cloudflaredProc = null;
+function startCloudflareTunnel() {
+    log(`Starting Cloudflare Tunnel to protect IP and serve site...`);
     
-    // Use npx localtunnel with fixed subdomain
-    const isWin = process.platform === 'win32';
-    const npxCmd = isWin ? 'npx.cmd' : 'npx';
+    const cloudflaredBin = 'C:\\Program Files (x86)\\cloudflared\\cloudflared.exe';
+    
+    // Check if cloudflared is installed
+    if (!fs.existsSync(cloudflaredBin)) {
+        log(`Cloudflared not found at ${cloudflaredBin}`);
+        return;
+    }
 
-    tunnelProc = spawn(npxCmd, ['localtunnel', '--port', PORT.toString(), '--subdomain', SUBDOMAIN], {
-        shell: true,
+    cloudflaredProc = spawn(cloudflaredBin, ['tunnel', '--url', `http://localhost:${PORT}`], {
         stdio: 'pipe'
     });
 
-    tunnelProc.stdout.on('data', data => {
+    cloudflaredProc.stderr.on('data', data => {
         const str = data.toString();
-        log(`[Tunnel] ${str.trim()}`);
-    });
-
-    tunnelProc.stderr.on('data', data => {
-        const str = data.toString();
-        if (!str.includes('DeprecationWarning')) {
-            log(`[Tunnel Warning] ${str.trim()}`);
+        // Look for the tunnel URL
+        const match = str.match(/https:\/\/[a-z0-9-]+\.trycloudflare\.com/i);
+        if (match) {
+            log(`[Cloudflare Tunnel Active] URL: ${match[0]}`);
         }
     });
 
-    tunnelProc.on('close', code => {
-        log(`Tunnel closed with code ${code}. Reconnecting in 5 seconds...`);
-        setTimeout(startTunnel, 5000);
+    cloudflaredProc.on('close', code => {
+        log(`Cloudflare tunnel closed (code: ${code}). Reconnecting in 5 seconds...`);
+        setTimeout(startCloudflareTunnel, 5000);
     });
 }
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-    if (tunnelProc) tunnelProc.kill();
+    if (cloudflaredProc) cloudflaredProc.kill();
     server.close();
     process.exit();
 });

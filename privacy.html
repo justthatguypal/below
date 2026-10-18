@@ -15,8 +15,9 @@
             --border: rgba(255,255,255,0.08);
             --border-hover: rgba(255,255,255,0.15);
             --text: #fff;
-            --text-secondary: rgba(255,255,255,0.65);
+            --text-secondary: rgba(255,255,255,0.7);
             --text-muted: rgba(255,255,255,0.4);
+            --emerald: #34d399;
         }
         html { scroll-behavior: smooth; }
         body {
@@ -31,6 +32,30 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #050505; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 10px; }
+
+        /* ===== SCALED BACKGROUND (Screenshot 2026-10-15 180853.png) ===== */
+        .site-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background-image: url('assets/site-bg.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            z-index: -2;
+            filter: brightness(0.32) saturate(1.15) contrast(1.05);
+            pointer-events: none;
+        }
+
+        .site-bg-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: radial-gradient(circle at center, rgba(5,5,5,0.5) 0%, rgba(5,5,5,0.92) 100%);
+            z-index: -1;
+            pointer-events: none;
+        }
 
         .dot-grid {
             position: fixed;
@@ -77,26 +102,44 @@
         }
         .nav-links a:hover { color: #fff; }
 
+        .discord-btn {
+            background: #5865F2;
+            color: #fff !important;
+            padding: 0.45rem 1rem;
+            border-radius: 8px;
+            font-weight: 600 !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: opacity 0.2s;
+        }
+        .discord-btn:hover { opacity: 0.9; }
+
         .container {
             position: relative;
             z-index: 1;
-            max-width: 820px;
+            max-width: 860px;
             margin: 0 auto;
             padding: 7rem 2rem 5rem;
         }
 
+        .badge-row {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
         .badge {
-            display: inline-block;
             background: var(--card);
             border: 1px solid var(--border);
-            padding: 0.35rem 0.9rem;
+            padding: 0.35rem 0.85rem;
             border-radius: 9999px;
-            font-size: 0.75rem;
-            color: var(--text-muted);
+            font-size: 0.72rem;
+            color: var(--emerald);
             font-weight: 600;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.05em;
             text-transform: uppercase;
-            margin-bottom: 1.5rem;
         }
 
         h1 {
@@ -109,12 +152,36 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .updated-date {
+        .meta-info {
             font-size: 0.85rem;
             color: var(--text-muted);
-            margin-bottom: 3rem;
+            margin-bottom: 2.5rem;
             padding-bottom: 1.5rem;
             border-bottom: 1px solid var(--border);
+        }
+
+        .compliance-banner {
+            background: rgba(52, 211, 153, 0.06);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            border-radius: 14px;
+            padding: 1.3rem 1.6rem;
+            margin-bottom: 2.2rem;
+        }
+
+        .compliance-banner h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--emerald);
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .compliance-banner p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
         }
 
         .section-block {
@@ -131,6 +198,20 @@
             letter-spacing: -0.02em;
             color: #fff;
             margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .vrc-tag {
+            font-size: 0.7rem;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid var(--border);
+            color: var(--emerald);
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: 600;
         }
 
         .section-block p, .section-block li {
@@ -164,6 +245,8 @@
     </style>
 </head>
 <body>
+    <div class="site-bg"></div>
+    <div class="site-bg-overlay"></div>
     <div class="dot-grid"></div>
 
     <nav>
@@ -171,66 +254,115 @@
         <ul class="nav-links">
             <li><a href="index.html">Home</a></li>
             <li><a href="index.html#vrc-requirements">App Lab Specs</a></li>
+            <li><a href="index.html#report">Report an Issue</a></li>
             <li><a href="privacy.html" style="color: #fff;">Privacy Policy</a></li>
-            <li><a href="terms.html">Terms of Service</a></li>
+            <li>
+                <a href="https://discord.gg/8hZ2F2qTVC" target="_blank" rel="noopener noreferrer" class="discord-btn">
+                    <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor">
+                        <path d="M13.5 1.2C12.5.7 11.4.3 10.3 0c-.2.3-.4.8-.5 1.1-1.2-.2-2.4-.2-3.6 0-.2-.3-.4-.8-.5-1.1-1.1.3-2.2.7-3.2 1.2C.8 4.1.2 7 .5 9.8c1.3 1 2.6 1.6 3.9 2 .3-.4.6-.9.9-1.4-.5-.2-.9-.4-1.3-.7.1-.1.2-.2.3-.3 2.5 1.2 5.3 1.2 7.8 0 .1.1.2.2.3.3-.4.3-.8.5-1.3.7.3.5.6 1 .9 1.4 1.3-.4 2.6-1 3.9-2 .3-3.2-.5-6.1-1.7-8.6zM5.3 8c-.8 0-1.4-.7-1.4-1.6s.6-1.6 1.4-1.6c.8 0 1.4.7 1.4 1.6S6.1 8 5.3 8zm5.4 0c-.8 0-1.4-.7-1.4-1.6s.6-1.6 1.4-1.6c.8 0 1.4.7 1.4 1.6s-.6 1.6-1.4 1.6z"/>
+                    </svg>
+                    Discord
+                </a>
+            </li>
         </ul>
     </nav>
 
     <div class="container">
-        <span class="badge">VRC.Quest.Privacy.1 Compliant</span>
+        <div class="badge-row">
+            <span class="badge">VRC.Privacy.1</span>
+            <span class="badge">VRC.Privacy.2</span>
+            <span class="badge">VRC.Privacy.3</span>
+            <span class="badge">VRC.Privacy.4</span>
+            <span class="badge">Meta Quest Store & App Lab</span>
+        </div>
+
         <h1>Privacy Policy</h1>
-        <p class="updated-date">Effective Date: October 18, 2026 • Developer: BelowTeam • Publisher: Foet555</p>
+        <p class="meta-info">
+            <strong>Effective Date:</strong> October 18, 2026 •
+            <strong>Developer:</strong> BelowTeam •
+            <strong>Publisher:</strong> Foet555 •
+            <strong>Application:</strong> Below (Virtual Reality)
+        </p>
 
-        <div class="section-block">
-            <h2>1. Overview</h2>
-            <p><strong>BelowTeam</strong> ("we", "us", or "our") respects your privacy. This Privacy Policy explains how information is collected, used, and protected when you play <strong>Below</strong> on Meta Quest devices and related services.</p>
-            <p>This policy is designed to satisfy Meta Quest Store & App Lab Virtual Reality Check (<strong>VRC.Quest.Privacy.1</strong>) compliance guidelines.</p>
+        <div class="compliance-banner">
+            <h3>✓ Meta Virtual Reality Checks (VRC) Compliance</h3>
+            <p>This Privacy Policy specifically addresses Virtual Reality Check criteria <strong>VRC.Privacy.1</strong>, <strong>VRC.Privacy.2</strong>, <strong>VRC.Privacy.3</strong>, and <strong>VRC.Privacy.4</strong> as required for Meta Horizon Store and Meta Quest App Lab publication.</p>
         </div>
 
+        <!-- VRC.Privacy.1 -->
         <div class="section-block">
-            <h2>2. Information We Collect</h2>
-            <p>We believe in minimal data collection to ensure player privacy and smooth VR performance:</p>
+            <h2>
+                1. Identification & Public Access
+                <span class="vrc-tag">VRC.Privacy.1</span>
+            </h2>
+            <p>This Privacy Policy is publicly hosted and maintained by <strong>BelowTeam</strong> (Publisher: <strong>Foet555</strong>) for the application <strong>Below</strong> on Meta Quest. This policy applies to all users who download, install, access, or interact with Below via Meta Quest, Meta Horizon Store, App Lab, or connected online services.</p>
+            <p>Our official support channel is accessible via our Discord community at <a href="https://discord.gg/8hZ2F2qTVC" style="color: #fff;" target="_blank">discord.gg/8hZ2F2qTVC</a> and our project repository at <a href="https://github.com/justthatguypal/below" style="color: #fff;" target="_blank">github.com/justthatguypal/below</a>.</p>
+        </div>
+
+        <!-- VRC.Privacy.2 -->
+        <div class="section-block">
+            <h2>
+                2. User Data Collection & Scope of Processing
+                <span class="vrc-tag">VRC.Privacy.2</span>
+            </h2>
+            <p>We believe in data minimization. Below collects only the data strictly necessary for game functionality, stability, and player safety:</p>
             <ul>
-                <li><strong>Gameplay Progress & Local Preferences:</strong> Settings such as locomotion style (teleport/smooth), audio volumes, comfort vignettes, and save states are stored locally on your Meta Quest headset.</li>
-                <li><strong>Headset & System Diagnostics:</strong> Hardware type (e.g. Meta Quest 2, Meta Quest 3, Quest Pro), framerate performance, and crash logs may be collected through standard Meta platform analytics to help us diagnose bugs and maintain framerate targets (72/90/120 Hz).</li>
-                <li><strong>User Identity:</strong> Your Meta User ID or username may be utilized for local player profiles and leaderboard/multiplayer integration if enabled.</li>
+                <li><strong>Local Game Data & Preferences:</strong> Your locomotion choices (smooth vs. teleport), audio volume levels, graphics settings, comfort vignettes, and game progression are stored locally on your headset device storage.</li>
+                <li><strong>Hardware & Performance Diagnostics:</strong> Device model (Meta Quest 2, Quest 3, Quest 3S, Quest Pro), runtime framerate, memory usage, and crash dumps collected via Meta's standard platform diagnostic APIs to ensure adherence to 72/90/120 Hz performance standards.</li>
+                <li><strong>Meta Account & Identity:</strong> If logged into a Meta Quest account, the application utilizes your Oculus/Meta User ID for player identification, save file association, and leaderboard rankings where applicable.</li>
+                <li><strong>Sensor & Camera Data Disclosure:</strong> Below does <strong>NOT</strong> access, record, process, or store raw headset camera feeds, passthrough footage, Guardian room mapping data, or biometric eye/face tracking raw metrics.</li>
+                <li><strong>Microphone Audio:</strong> Microphone audio is never recorded, stored, or analyzed on developer servers.</li>
             </ul>
         </div>
 
+        <!-- VRC.Privacy.3 -->
         <div class="section-block">
-            <h2>3. Information We Do NOT Collect</h2>
+            <h2>
+                3. Data Retention, User Rights & Deletion Mechanism
+                <span class="vrc-tag">VRC.Privacy.3</span>
+            </h2>
+            <p>We respect your right to control, inspect, and delete your personal and gameplay information:</p>
             <ul>
-                <li>We do NOT collect raw microphone audio without your consent.</li>
-                <li>We do NOT collect or store Guardian/Boundary passthrough camera data or room scans.</li>
-                <li>We do NOT sell, rent, or monetize your personal data to third-party advertisers.</li>
+                <li><strong>Local Data Deletion:</strong> You can completely erase all locally stored data, preferences, and save files at any time by uninstalling Below from your Meta Quest library or navigating to <em>Settings → Storage → Below → Delete App Data</em> on your headset.</li>
+                <li><strong>Cloud & Server Data Deletion Requests:</strong> If you wish to request the deletion of any associated account records, bug reports, or leaderboard entries tied to your Meta User ID, you can submit a deletion request through:
+                    <ul>
+                        <li>The official website reporting tool at <a href="index.html#report" style="color: #fff;">below/index.html#report</a></li>
+                        <li>Our official Discord support server: <a href="https://discord.gg/8hZ2F2qTVC" style="color: #fff;" target="_blank">https://discord.gg/8hZ2F2qTVC</a></li>
+                    </ul>
+                    All verified deletion requests are processed within 30 days without charge.
+                </li>
             </ul>
         </div>
 
+        <!-- VRC.Privacy.4 -->
         <div class="section-block">
-            <h2>4. Meta Platform Data</h2>
-            <p>As a title operating within the Meta Quest ecosystem, certain data processing is governed by Meta's Privacy Policy. For more information regarding Meta account data handling, visit Meta's Privacy Center.</p>
+            <h2>
+                4. Children's Privacy & Age Assurance
+                <span class="vrc-tag">VRC.Privacy.4</span>
+            </h2>
+            <p>Below is designed and distributed in compliance with Meta Quest platform age policies and applicable child protection laws (including the Children’s Online Privacy Protection Act - COPPA and GDPR-K):</p>
+            <ul>
+                <li>Below does not knowingly collect, store, or solicit personal data from children under the minimum age specified by Meta account requirements (typically 13 years of age, or 10-12 where parent-managed Meta accounts are supported).</li>
+                <li>If we discover that a user under the legal age has provided personal data without verified parental consent through the Meta ecosystem, we will promptly delete that data from our records.</li>
+                <li>Parents or legal guardians may contact us directly via Discord (<a href="https://discord.gg/8hZ2F2qTVC" style="color: #fff;" target="_blank">discord.gg/8hZ2F2qTVC</a>) to review, request deletion of, or refuse further collection of their child's information.</li>
+            </ul>
         </div>
 
+        <!-- 5. Security & Updates -->
         <div class="section-block">
-            <h2>5. Data Retention & Deletion</h2>
-            <p>All local game saves and preference files can be deleted at any time by uninstalling the application from your Meta Quest library or clearing the application data from Quest headset storage settings.</p>
-        </div>
-
-        <div class="section-block">
-            <h2>6. Contact Us</h2>
-            <p>If you have any questions about this Privacy Policy or wish to request data assistance, please contact us via our developer channel or repository:</p>
-            <p><strong>Developer:</strong> BelowTeam (Publisher: Foet555)<br>
-            <strong>GitHub:</strong> <a href="https://github.com/justthatguypal/below" style="color: #fff;">github.com/justthatguypal/below</a></p>
+            <h2>5. Security & Policy Changes</h2>
+            <p>We implement standard security measures to protect any transmitted reports or diagnostics. If this Privacy Policy is updated, the revision date will be reflected at the top of this page, and material updates will be disclosed through app release notes on Meta Quest App Lab.</p>
         </div>
     </div>
 
     <footer>
-        <p>© 2026 BelowTeam (Foet555). All rights reserved.</p>
+        <p>© 2026 BelowTeam (Publisher: Foet555). All rights reserved.</p>
         <p style="margin-top: 0.5rem;">
             <a href="index.html">Home</a> •
             <a href="index.html#vrc-requirements">App Lab Specs</a> •
-            <a href="privacy.html">Privacy Policy</a> •
-            <a href="terms.html">Terms of Service</a>
+            <a href="index.html#report">Report an Issue</a> •
+            <a href="privacy.html">Privacy Policy (VRC.Privacy.1–4)</a> •
+            <a href="https://discord.gg/8hZ2F2qTVC" target="_blank">Discord Community</a>
         </p>
     </footer>
 </body>

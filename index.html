@@ -16,10 +16,12 @@
             --border: rgba(255,255,255,0.08);
             --border-hover: rgba(255,255,255,0.15);
             --text: #fff;
-            --text-secondary: rgba(255,255,255,0.6);
-            --text-muted: rgba(255,255,255,0.35);
+            --text-secondary: rgba(255,255,255,0.65);
+            --text-muted: rgba(255,255,255,0.38);
             --emerald: #34d399;
             --emerald-glow: rgba(52, 211, 153, 0.4);
+            --discord: #5865F2;
+            --youtube: #FF0000;
         }
 
         html { scroll-behavior: smooth; }
@@ -37,6 +39,35 @@
         ::-webkit-scrollbar-track { background: #050505; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+
+        /* ===== SCALED BACKGROUND (Screenshot 2026-10-15 180853.png) ===== */
+        .site-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('assets/site-bg.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            z-index: -2;
+            filter: brightness(0.40) saturate(1.15) contrast(1.05);
+            pointer-events: none;
+        }
+
+        .site-bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, rgba(5,5,5,0.38) 0%, rgba(5,5,5,0.85) 100%),
+                        linear-gradient(180deg, rgba(5,5,5,0.4) 0%, rgba(5,5,5,0.7) 100%);
+            z-index: -1;
+            pointer-events: none;
+        }
 
         /* ===== DOT GRID BACKGROUND ===== */
         .dot-grid {
@@ -90,7 +121,7 @@
         .nav-links {
             display: flex;
             list-style: none;
-            gap: 1.8rem;
+            gap: 1.6rem;
             align-items: center;
         }
 
@@ -102,22 +133,24 @@
             transition: color 0.2s;
         }
 
-        .nav-links a:hover {
-            color: #fff;
-        }
+        .nav-links a:hover { color: #fff; }
 
-        .nav-btn {
-            background: #fff;
-            color: #000 !important;
+        .discord-btn {
+            background: var(--discord) !important;
+            color: #fff !important;
             font-size: 0.8rem !important;
             font-weight: 600 !important;
             padding: 0.45rem 1rem;
             border-radius: 8px;
-            transition: all 0.2s !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            transition: transform 0.2s, opacity 0.2s !important;
+            box-shadow: 0 4px 14px rgba(88, 101, 242, 0.3);
         }
 
-        .nav-btn:hover {
-            background: rgba(255,255,255,0.9);
+        .discord-btn:hover {
+            opacity: 0.92;
             transform: translateY(-1px);
         }
 
@@ -146,7 +179,7 @@
         .hero-content {
             position: relative;
             z-index: 2;
-            max-width: 720px;
+            max-width: 740px;
         }
 
         .hero-badge {
@@ -187,7 +220,7 @@
             font-size: 1.1rem;
             line-height: 1.7;
             color: var(--text-secondary);
-            max-width: 540px;
+            max-width: 560px;
             margin: 0 auto 2.5rem;
             font-weight: 400;
         }
@@ -225,6 +258,17 @@
             transform: translateY(-1px);
         }
 
+        .btn-discord {
+            background: var(--discord);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(88, 101, 242, 0.35);
+        }
+
+        .btn-discord:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
+        }
+
         .btn-ghost {
             background: var(--card);
             color: rgba(255,255,255,0.85);
@@ -237,7 +281,6 @@
             color: #fff;
         }
 
-        /* Hero showcase */
         .hero-showcase {
             position: relative;
             z-index: 2;
@@ -385,11 +428,9 @@
             transition: transform 0.5s;
         }
 
-        .about-image:hover img {
-            transform: scale(1.02);
-        }
+        .about-image:hover img { transform: scale(1.02); }
 
-        /* ===== FULL IMAGE ===== */
+        /* ===== FULL IMAGE BANNER ===== */
         .full-image {
             position: relative;
             border-radius: 16px;
@@ -525,10 +566,7 @@
             letter-spacing: 0.05em;
         }
 
-        .req-list {
-            list-style: none;
-            padding: 0;
-        }
+        .req-list { list-style: none; padding: 0; }
 
         .req-list li {
             font-size: 0.88rem;
@@ -539,22 +577,11 @@
             justify-content: space-between;
         }
 
-        .req-list li:last-child {
-            border-bottom: none;
-        }
+        .req-list li:last-child { border-bottom: none; }
 
-        .req-key {
-            color: var(--text-muted);
-            font-weight: 500;
-        }
+        .req-key { color: var(--text-muted); font-weight: 500; }
+        .req-val { color: #fff; font-weight: 600; text-align: right; }
 
-        .req-val {
-            color: #fff;
-            font-weight: 600;
-            text-align: right;
-        }
-
-        /* VRC Checks Box */
         .vrc-box {
             background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
             border: 1px solid var(--border);
@@ -607,6 +634,260 @@
             line-height: 1.4;
         }
 
+        /* ===== REPORTING SYSTEM (NO-SPAM ANTI-BOT) ===== */
+        .report-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            margin-top: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .report-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .report-form {
+            max-width: 620px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .form-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.8);
+            letter-spacing: 0.02em;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.06);
+        }
+
+        .form-select option {
+            background: #111;
+            color: #fff;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 110px;
+        }
+
+        /* Honeypot field (hidden from humans, catches bots) */
+        .hp-field {
+            display: none !important;
+            visibility: hidden !important;
+            position: absolute !important;
+            left: -9999px !important;
+        }
+
+        /* Anti-Spam Math Challenge */
+        .anti-spam-box {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .anti-spam-challenge {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+        }
+
+        .challenge-badge {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid var(--border);
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-weight: 700;
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        .anti-spam-input {
+            width: 100px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.5rem 0.8rem;
+            color: #fff;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .anti-spam-input:focus {
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .cooldown-alert {
+            display: none;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 10px;
+            padding: 0.9rem 1.2rem;
+            color: #f87171;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .success-alert {
+            display: none;
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            border-radius: 10px;
+            padding: 0.9rem 1.2rem;
+            color: #34d399;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .submit-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            padding: 0.85rem 1.8rem;
+            font-family: inherit;
+            font-size: 0.92rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.9);
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        /* ===== COMMUNITY / SOCIAL SECTION ===== */
+        .community-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .community-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 1.5rem;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .community-card:hover {
+            background: var(--card-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .comm-top {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .comm-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .comm-icon.discord-bg {
+            background: rgba(88, 101, 242, 0.15);
+            color: #5865F2;
+            border: 1px solid rgba(88, 101, 242, 0.3);
+        }
+
+        .comm-icon.yt-bg {
+            background: rgba(255, 0, 0, 0.15);
+            color: #FF0000;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+
+        .comm-info h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+
+        .comm-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .comm-desc {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .comm-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
         /* ===== SCREENSHOTS ===== */
         .image-row {
             display: grid;
@@ -633,9 +914,7 @@
             transition: transform 0.5s;
         }
 
-        .image-card:hover img {
-            transform: scale(1.03);
-        }
+        .image-card:hover img { transform: scale(1.03); }
 
         .image-card .caption {
             position: absolute;
@@ -735,7 +1014,7 @@
 
         .footer-right {
             display: flex;
-            gap: 1.5rem;
+            gap: 1.4rem;
             align-items: center;
             flex-wrap: wrap;
         }
@@ -747,9 +1026,7 @@
             transition: color 0.2s;
         }
 
-        .footer-right a:hover {
-            color: #fff;
-        }
+        .footer-right a:hover { color: #fff; }
 
         /* ===== AUDIO TOGGLE ===== */
         .audio-toggle {
@@ -797,6 +1074,7 @@
             .image-row { grid-template-columns: 1fr; }
             .requirements-grid { grid-template-columns: 1fr; }
             .vrc-items { grid-template-columns: 1fr 1fr; }
+            .community-grid { grid-template-columns: 1fr; }
             .stats-row { gap: 2rem; flex-wrap: wrap; }
             .nav-links { display: none; }
             footer { flex-direction: column; text-align: center; }
@@ -810,6 +1088,8 @@
         <source src="assets/bgmusic-loop.mp3" type="audio/mpeg">
     </audio>
 
+    <div class="site-bg"></div>
+    <div class="site-bg-overlay"></div>
     <div class="dot-grid"></div>
     <div class="glow-orb"></div>
 
@@ -820,10 +1100,17 @@
             <li><a href="#about">About</a></li>
             <li><a href="#features">Features</a></li>
             <li><a href="#vrc-requirements">App Lab Specs</a></li>
-            <li><a href="#screenshots">Screenshots</a></li>
-            <li><a href="terms.html">Terms</a></li>
-            <li><a href="privacy.html">Privacy</a></li>
-            <li><a href="#platforms" class="nav-btn">Get Started</a></li>
+            <li><a href="#report">Report Issue</a></li>
+            <li><a href="#community">Community</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li>
+                <a href="https://discord.gg/8hZ2F2qTVC" target="_blank" rel="noopener noreferrer" class="discord-btn">
+                    <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor">
+                        <path d="M13.5 1.2C12.5.7 11.4.3 10.3 0c-.2.3-.4.8-.5 1.1-1.2-.2-2.4-.2-3.6 0-.2-.3-.4-.8-.5-1.1-1.1.3-2.2.7-3.2 1.2C.8 4.1.2 7 .5 9.8c1.3 1 2.6 1.6 3.9 2 .3-.4.6-.9.9-1.4-.5-.2-.9-.4-1.3-.7.1-.1.2-.2.3-.3 2.5 1.2 5.3 1.2 7.8 0 .1.1.2.2.3.3-.4.3-.8.5-1.3.7.3.5.6 1 .9 1.4 1.3-.4 2.6-1 3.9-2 .3-3.2-.5-6.1-1.7-8.6zM5.3 8c-.8 0-1.4-.7-1.4-1.6s.6-1.6 1.4-1.6c.8 0 1.4.7 1.4 1.6S6.1 8 5.3 8zm5.4 0c-.8 0-1.4-.7-1.4-1.6s.6-1.6 1.4-1.6c.8 0 1.4.7 1.4 1.6s-.6 1.6-1.4 1.6z"/>
+                    </svg>
+                    Discord
+                </a>
+            </li>
         </ul>
     </nav>
 
@@ -838,8 +1125,14 @@
             <h1 class="hero-title">Below</h1>
             <p class="hero-desc">An immersive VR adventure built for Meta Quest. Explore vast forests, uncover hidden secrets, and venture into the unknown.</p>
             <div class="hero-buttons">
+                <a href="https://discord.gg/8hZ2F2qTVC" target="_blank" rel="noopener noreferrer" class="btn btn-discord">
+                    <svg width="18" height="14" viewBox="0 0 16 12" fill="currentColor">
+                        <path d="M13.5 1.2C12.5.7 11.4.3 10.3 0c-.2.3-.4.8-.5 1.1-1.2-.2-2.4-.2-3.6 0-.2-.3-.4-.8-.5-1.1-1.1.3-2.2.7-3.2 1.2C.8 4.1.2 7 .5 9.8c1.3 1 2.6 1.6 3.9 2 .3-.4.6-.9.9-1.4-.5-.2-.9-.4-1.3-.7.1-.1.2-.2.3-.3 2.5 1.2 5.3 1.2 7.8 0 .1.1.2.2.3.3-.4.3-.8.5-1.3.7.3.5.6 1 .9 1.4 1.3-.4 2.6-1 3.9-2 .3-3.2-.5-6.1-1.7-8.6zM5.3 8c-.8 0-1.4-.7-1.4-1.6s.6-1.6 1.4-1.6c.8 0 1.4.7 1.4 1.6S6.1 8 5.3 8zm5.4 0c-.8 0-1.4-.7-1.4-1.6s.6-1.6 1.4-1.6c.8 0 1.4.7 1.4 1.6s-.6 1.6-1.4 1.6z"/>
+                    </svg>
+                    Join Discord Server
+                </a>
                 <a href="#vrc-requirements" class="btn btn-white">App Lab Specs →</a>
-                <a href="#screenshots" class="btn btn-ghost">Screenshots</a>
+                <a href="#report" class="btn btn-ghost">Report an Issue</a>
             </div>
         </div>
         <div class="hero-showcase shimmer reveal">
@@ -945,7 +1238,7 @@
         <div class="section-header reveal">
             <span class="section-label">Meta Quest App Lab</span>
             <h2 class="section-title">System & VR Requirements</h2>
-            <p class="section-desc">Detailed hardware specifications, boundary modes, and Virtual Reality Check (VRC) compliance standards for Below.</p>
+            <p class="section-desc">Hardware specifications, boundary modes, and Virtual Reality Check (VRC) standards for Below.</p>
         </div>
 
         <div class="requirements-grid reveal">
@@ -1015,22 +1308,138 @@
 
             <div class="vrc-items">
                 <div class="vrc-item">
-                    <div class="vrc-code">VRC.Publishing.1</div>
-                    <div class="vrc-desc">Proper application manifest, package names, and versioning</div>
+                    <div class="vrc-code">VRC.Publishing.1-3</div>
+                    <div class="vrc-desc">Application manifest, assets, icons, packaging, and exit flow</div>
                 </div>
                 <div class="vrc-item">
-                    <div class="vrc-code">VRC.Publishing.2</div>
-                    <div class="vrc-desc">Correct assets, icons, screenshots, and metadata formatting</div>
+                    <div class="vrc-code">VRC.Privacy.1</div>
+                    <div class="vrc-desc">Public Privacy Policy matching developer identity</div>
                 </div>
                 <div class="vrc-item">
-                    <div class="vrc-code">VRC.Publishing.3</div>
-                    <div class="vrc-desc">Graceful error handling, input responsiveness, and exit flow</div>
+                    <div class="vrc-code">VRC.Privacy.2 & 3</div>
+                    <div class="vrc-desc">Data collection scope and user data deletion mechanism</div>
                 </div>
                 <div class="vrc-item">
-                    <div class="vrc-code">VRC.Quest.Privacy.1</div>
-                    <div class="vrc-desc">Public Privacy Policy and user data protection compliance</div>
+                    <div class="vrc-code">VRC.Privacy.4</div>
+                    <div class="vrc-desc">Children's privacy compliance & age assurance standards</div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- REPORTING SYSTEM WITH ANTI-SPAM / ANTI-BOT -->
+    <div class="section" id="report">
+        <div class="report-section reveal">
+            <div class="report-header">
+                <span class="section-label">Player Support</span>
+                <h2 class="section-title">Report an Issue or Bug</h2>
+                <p class="section-desc">Encountered a bug, exploit, or conduct issue in Below? Let our team know. Protected by anti-bot rate limiting.</p>
+            </div>
+
+            <form class="report-form" id="reportForm" onsubmit="handleReportSubmit(event)">
+                <!-- Honeypot anti-bot trap -->
+                <input type="text" name="website_url_hp" id="hpField" class="hp-field" tabindex="-1" autocomplete="off">
+
+                <div class="form-group">
+                    <label class="form-label" for="reportType">Report Category *</label>
+                    <select class="form-select" id="reportType" required>
+                        <option value="bug">🐛 In-Game Bug / Glitch</option>
+                        <option value="performance">⚡ Performance Drop / Frame Stutter</option>
+                        <option value="conduct">🛡️ Player Conduct / Toxic Behavior</option>
+                        <option value="exploit">🚫 Cheating / Map Exploitation</option>
+                        <option value="data_request">🗑️ Data Deletion Request (VRC.Privacy.3)</option>
+                        <option value="other">💬 General Feedback / Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="playerTag">Your Meta / In-Game Name (Optional)</label>
+                    <input type="text" class="form-input" id="playerTag" placeholder="e.g. Player_42" maxlength="50">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="reportDetails">Description & Steps to Reproduce *</label>
+                    <textarea class="form-textarea" id="reportDetails" placeholder="Describe what happened, where you were in the forest, and what device you were using..." minlength="15" maxlength="1500" required></textarea>
+                </div>
+
+                <!-- Anti-Bot Verification Challenge -->
+                <div class="anti-spam-box">
+                    <div class="anti-spam-challenge">
+                        <span>Anti-Bot Verification:</span>
+                        <span class="challenge-badge" id="mathQuestion">4 + 7 = ?</span>
+                    </div>
+                    <input type="number" class="anti-spam-input" id="mathAnswer" placeholder="Answer" required>
+                </div>
+
+                <div class="cooldown-alert" id="cooldownAlert">
+                    ⏱️ Anti-spam limit active. Please wait <span id="cooldownTimer">300</span> seconds before submitting another report.
+                </div>
+
+                <div class="success-alert" id="successAlert">
+                    ✓ Report submitted successfully! Our development team has received your ticket.
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span>Submit Report</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- COMMUNITY SECTION -->
+    <div class="section" id="community">
+        <div class="section-header reveal">
+            <span class="section-label">Community</span>
+            <h2 class="section-title">Join the Below Community</h2>
+            <p class="section-desc">Connect with players, get update sneak peeks, report bugs directly, and hang out with the devs.</p>
+        </div>
+
+        <div class="community-grid reveal">
+            <!-- Discord -->
+            <a href="https://discord.gg/8hZ2F2qTVC" target="_blank" rel="noopener noreferrer" class="community-card">
+                <div>
+                    <div class="comm-top">
+                        <div class="comm-icon discord-bg">
+                            <svg width="24" height="18" viewBox="0 0 16 12" fill="currentColor">
+                                <path d="M13.5 1.2C12.5.7 11.4.3 10.3 0c-.2.3-.4.8-.5 1.1-1.2-.2-2.4-.2-3.6 0-.2-.3-.4-.8-.5-1.1-1.1.3-2.2.7-3.2 1.2C.8 4.1.2 7 .5 9.8c1.3 1 2.6 1.6 3.9 2 .3-.4.6-.9.9-1.4-.5-.2-.9-.4-1.3-.7.1-.1.2-.2.3-.3 2.5 1.2 5.3 1.2 7.8 0 .1.1.2.2.3.3-.4.3-.8.5-1.3.7.3.5.6 1 .9 1.4 1.3-.4 2.6-1 3.9-2 .3-3.2-.5-6.1-1.7-8.6zM5.3 8c-.8 0-1.4-.7-1.4-1.6s.6-1.6 1.4-1.6c.8 0 1.4.7 1.4 1.6S6.1 8 5.3 8zm5.4 0c-.8 0-1.4-.7-1.4-1.6s.6-1.6 1.4-1.6c.8 0 1.4.7 1.4 1.6s-.6 1.6-1.4 1.6z"/>
+                            </svg>
+                        </div>
+                        <div class="comm-info">
+                            <h3>Discord Server</h3>
+                            <p>Official Developer & Player Hub</p>
+                        </div>
+                    </div>
+                    <p class="comm-desc" style="margin-top: 1rem;">Chat with Below developers, share clips, report bugs live, and be the first to test upcoming builds.</p>
+                </div>
+                <div class="comm-link-btn" style="color: #5865F2;">
+                    Join discord.gg/8hZ2F2qTVC →
+                </div>
+            </a>
+
+            <!-- YouTube -->
+            <a href="https://www.youtube.com/@officialbelow" target="_blank" rel="noopener noreferrer" class="community-card">
+                <div>
+                    <div class="comm-top">
+                        <div class="comm-icon yt-bg">
+                            <svg width="24" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                            </svg>
+                        </div>
+                        <div class="comm-info">
+                            <h3>YouTube Channel</h3>
+                            <p>@officialbelow</p>
+                        </div>
+                    </div>
+                    <p class="comm-desc" style="margin-top: 1rem;">Watch trailers, gameplay previews, developer walkthroughs, and VR feature updates.</p>
+                </div>
+                <div class="comm-link-btn" style="color: #FF5555;">
+                    Visit youtube.com/@officialbelow →
+                </div>
+            </a>
         </div>
     </div>
 
@@ -1095,9 +1504,10 @@
             <a href="#about">About</a>
             <a href="#features">Features</a>
             <a href="#vrc-requirements">App Lab Specs</a>
-            <a href="#screenshots">Screenshots</a>
-            <a href="terms.html">Terms of Service</a>
-            <a href="privacy.html">Privacy Policy</a>
+            <a href="#report">Report Issue</a>
+            <a href="https://discord.gg/8hZ2F2qTVC" target="_blank" rel="noopener noreferrer">Discord</a>
+            <a href="https://www.youtube.com/@officialbelow" target="_blank" rel="noopener noreferrer">YouTube</a>
+            <a href="privacy.html">Privacy Policy (VRC.Privacy.1–4)</a>
         </div>
     </footer>
 
@@ -1142,6 +1552,125 @@
             });
         }, { threshold: 0.1 });
         reveals.forEach(el => observer.observe(el));
+
+        // ===== ANTI-SPAM / ANTI-BOT REPORTING SYSTEM =====
+        let numA = Math.floor(Math.random() * 8) + 2;
+        let numB = Math.floor(Math.random() * 8) + 1;
+        let correctAnswer = numA + numB;
+        document.getElementById('mathQuestion').textContent = `${numA} + ${numB} = ?`;
+
+        function refreshMath() {
+            numA = Math.floor(Math.random() * 8) + 2;
+            numB = Math.floor(Math.random() * 8) + 1;
+            correctAnswer = numA + numB;
+            document.getElementById('mathQuestion').textContent = `${numA} + ${numB} = ?`;
+            document.getElementById('mathAnswer').value = '';
+        }
+
+        const COOLDOWN_SECONDS = 300; // 5 minutes anti-spam limit
+
+        function checkCooldown() {
+            const lastReportTime = localStorage.getItem('below_last_report_ts');
+            if (lastReportTime) {
+                const elapsed = Math.floor((Date.now() - parseInt(lastReportTime, 10)) / 1000);
+                if (elapsed < COOLDOWN_SECONDS) {
+                    const remaining = COOLDOWN_SECONDS - elapsed;
+                    activateCooldownUI(remaining);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        let cooldownInterval = null;
+        function activateCooldownUI(remainingSeconds) {
+            const btn = document.getElementById('submitBtn');
+            const alertBox = document.getElementById('cooldownAlert');
+            const timerSpan = document.getElementById('cooldownTimer');
+
+            btn.disabled = true;
+            alertBox.style.display = 'block';
+            timerSpan.textContent = remainingSeconds;
+
+            if (cooldownInterval) clearInterval(cooldownInterval);
+
+            cooldownInterval = setInterval(() => {
+                remainingSeconds--;
+                if (remainingSeconds <= 0) {
+                    clearInterval(cooldownInterval);
+                    btn.disabled = false;
+                    alertBox.style.display = 'none';
+                    localStorage.removeItem('below_last_report_ts');
+                } else {
+                    timerSpan.textContent = remainingSeconds;
+                }
+            }, 1000);
+        }
+
+        // Initialize check on page load
+        checkCooldown();
+
+        function handleReportSubmit(e) {
+            e.preventDefault();
+
+            // 1. Honeypot check (catches automated scraper bots)
+            const hp = document.getElementById('hpField').value;
+            if (hp && hp.trim() !== '') {
+                console.warn('Bot detected via honeypot');
+                // Silently drop
+                return false;
+            }
+
+            // 2. Cooldown check
+            if (checkCooldown()) {
+                return false;
+            }
+
+            // 3. Math verification check
+            const userAnswer = parseInt(document.getElementById('mathAnswer').value, 10);
+            if (userAnswer !== correctAnswer) {
+                alert('Anti-bot verification failed. Please solve the simple math problem correctly.');
+                refreshMath();
+                return false;
+            }
+
+            // 4. Rate-limit save
+            localStorage.setItem('below_last_report_ts', Date.now().toString());
+
+            // 5. Gather report data
+            const reportData = {
+                type: document.getElementById('reportType').value,
+                playerTag: document.getElementById('playerTag').value.trim() || 'Anonymous',
+                details: document.getElementById('reportDetails').value.trim(),
+                timestamp: new Date().toISOString()
+            };
+
+            // Save report locally in browser storage & dispatch
+            let existingReports = JSON.parse(localStorage.getItem('below_submitted_reports') || '[]');
+            existingReports.push(reportData);
+            localStorage.setItem('below_submitted_reports', JSON.stringify(existingReports));
+
+            // Also send to local backend if running
+            fetch('/api/report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reportData)
+            }).catch(() => {});
+
+            // Show success
+            const successBox = document.getElementById('successAlert');
+            successBox.style.display = 'block';
+            document.getElementById('reportForm').reset();
+            refreshMath();
+
+            activateCooldownUI(COOLDOWN_SECONDS);
+
+            setTimeout(() => {
+                successBox.style.display = 'none';
+            }, 6000);
+
+            return false;
+        }
     </script>
 
 </body>

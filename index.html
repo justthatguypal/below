@@ -3,605 +3,785 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BELOW — Enter the Darkness</title>
+    <title>Below — VR Adventure Game</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&family=Special+Elite&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* ===== RESET & BASE ===== */
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-        html {
-            scroll-behavior: smooth;
-            scrollbar-width: thin;
-            scrollbar-color: #ff0040 #0a0a0a;
+        :root {
+            --bg: #050505;
+            --card: rgba(255,255,255,0.03);
+            --card-hover: rgba(255,255,255,0.06);
+            --border: rgba(255,255,255,0.08);
+            --border-hover: rgba(255,255,255,0.15);
+            --text: #fff;
+            --text-secondary: rgba(255,255,255,0.6);
+            --text-muted: rgba(255,255,255,0.35);
+            --emerald: #34d399;
+            --emerald-glow: rgba(52, 211, 153, 0.4);
         }
+
+        html { scroll-behavior: smooth; }
 
         body {
-            background: #0a0a0a;
-            color: #c8c8c8;
-            font-family: 'Special Elite', cursive;
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
             overflow-x: hidden;
-            cursor: default;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* ===== FIXED BACKGROUND ===== */
-        .bg-fixed {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -2;
-            background: url('assets/background.png') center center / cover no-repeat;
-            filter: brightness(0.25) saturate(1.4) contrast(1.2);
-        }
+        * { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.18) #050505; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
 
-        /* Dark overlay with vignette */
-        .bg-overlay {
+        /* ===== DOT GRID BACKGROUND ===== */
+        .dot-grid {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;
-            background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.85) 100%);
-            pointer-events: none;
-        }
-
-        /* ===== FLOATING PARTICLES (fog/embers) ===== */
-        .particles {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            inset: 0;
             z-index: 0;
+            background-image: radial-gradient(circle at center, rgba(255,255,255,0.06) 1px, transparent 1px);
+            background-size: 24px 24px;
             pointer-events: none;
-            overflow: hidden;
         }
 
-        .particle {
-            position: absolute;
+        .glow-orb {
+            position: fixed;
+            width: 700px;
+            height: 700px;
             border-radius: 50%;
-            opacity: 0;
-            animation: floatUp linear infinite;
+            background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+            top: -250px;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: 0;
         }
 
-        @keyframes floatUp {
-            0%   { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
-            10%  { opacity: 0.6; }
-            90%  { opacity: 0.3; }
-            100% { transform: translateY(-20vh) translateX(80px) scale(1); opacity: 0; }
-        }
-
-        /* ===== AUDIO ENTER GATE ===== */
-        .enter-gate {
+        /* ===== NAV ===== */
+        nav {
             position: fixed;
             top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 9999;
-            background: #000;
+            width: 100%;
+            z-index: 50;
+            padding: 0 2rem;
+            height: 64px;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: opacity 1s ease, visibility 1s ease;
+            justify-content: space-between;
+            background: rgba(5, 5, 5, 0.82);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
         }
 
-        .enter-gate.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        .enter-gate h1 {
-            font-family: 'Nosifer', cursive;
-            font-size: clamp(3rem, 8vw, 7rem);
-            color: #ff0040;
-            text-shadow:
-                0 0 10px #ff0040,
-                0 0 20px #ff0040,
-                0 0 40px #ff003388,
-                0 0 80px #ff003355;
-            animation: flicker 3s infinite alternate;
-            letter-spacing: 0.15em;
-        }
-
-        .enter-gate p {
-            font-family: 'Special Elite', cursive;
-            font-size: 1.2rem;
-            color: #ff004088;
-            margin-top: 2rem;
-            animation: pulse 2s ease-in-out infinite;
-            letter-spacing: 0.3em;
+        .nav-logo {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 1; }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1.8rem;
+            align-items: center;
         }
 
-        /* ===== MAIN CONTENT ===== */
-        .main-content {
-            position: relative;
-            z-index: 1;
+        .nav-links a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.2s;
         }
 
-        /* ===== HEADER / HERO ===== */
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .nav-btn {
+            background: #fff;
+            color: #000 !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            padding: 0.45rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s !important;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.9);
+            transform: translateY(-1px);
+        }
+
+        /* ===== HERO ===== */
         .hero {
             position: relative;
-            width: 100%;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            text-align: center;
+            padding: 7rem 2rem 4rem;
             overflow: hidden;
         }
 
-        .hero-image {
+        .hero-glow {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            object-fit: cover;
-            filter: brightness(0.35) saturate(1.3) contrast(1.1);
+            background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255,255,255,0.08), transparent);
+            pointer-events: none;
             z-index: 0;
         }
 
         .hero-content {
             position: relative;
             z-index: 2;
-            text-align: center;
-            padding: 2rem;
+            max-width: 720px;
         }
 
-        .hero-title {
-            font-family: 'Nosifer', cursive;
-            font-size: clamp(4rem, 12vw, 10rem);
-            color: #ff0040;
-            text-shadow:
-                0 0 7px #ff0040,
-                0 0 15px #ff0040,
-                0 0 30px #ff004099,
-                0 0 60px #ff004066,
-                0 0 100px #ff004033,
-                0 0 150px #cc003322;
-            animation: flicker 4s infinite alternate;
-            letter-spacing: 0.2em;
-            line-height: 1.1;
-        }
-
-        .hero-subtitle {
-            font-family: 'Creepster', cursive;
-            font-size: clamp(1rem, 3vw, 2rem);
-            color: #00ffcc;
-            text-shadow:
-                0 0 5px #00ffcc,
-                0 0 15px #00ffcc88,
-                0 0 30px #00ffcc44;
-            margin-top: 1.5rem;
-            letter-spacing: 0.4em;
-            text-transform: uppercase;
-            animation: glitchText 5s infinite;
-        }
-
-        .hero-tagline {
-            font-family: 'Special Elite', cursive;
-            font-size: clamp(0.9rem, 2vw, 1.4rem);
-            color: #ff6600;
-            text-shadow:
-                0 0 5px #ff6600,
-                0 0 15px #ff660088;
-            margin-top: 2rem;
-            max-width: 600px;
-            line-height: 1.8;
-            opacity: 0.9;
-        }
-
-        /* Blood drip from hero bottom */
-        .hero::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100%;
-            height: 80px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 80' preserveAspectRatio='none'%3E%3Cpath d='M0,0 C100,0 100,40 150,60 C180,70 200,80 200,80 L200,0 Z' fill='%23ff004022'/%3E%3Cpath d='M300,0 C350,0 380,50 400,70 C410,75 420,80 420,80 L420,0 Z' fill='%23ff004018'/%3E%3Cpath d='M600,0 C650,0 670,30 700,55 C720,65 740,80 740,80 L740,0 Z' fill='%23ff004020'/%3E%3Cpath d='M900,0 C950,0 960,45 1000,65 C1020,72 1050,80 1050,80 L1050,0 Z' fill='%23ff004015'/%3E%3C/svg%3E") repeat-x;
-            z-index: 3;
-            pointer-events: none;
-        }
-
-        /* Scan line effect */
-        .scanlines {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 100;
-            pointer-events: none;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(0, 0, 0, 0.05) 2px,
-                rgba(0, 0, 0, 0.05) 4px
-            );
-        }
-
-        /* ===== SCROLL INDICATOR ===== */
-        .scroll-indicator {
-            position: absolute;
-            bottom: 3rem;
-            z-index: 5;
-            display: flex;
-            flex-direction: column;
+        .hero-badge {
+            display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            animation: bounce 2s ease-in-out infinite;
-        }
-
-        .scroll-indicator span {
-            color: #ff004088;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            padding: 0.4rem 1rem;
             font-size: 0.8rem;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-        }
-
-        .scroll-arrow {
-            width: 24px;
-            height: 24px;
-            border-right: 2px solid #ff0040;
-            border-bottom: 2px solid #ff0040;
-            transform: rotate(45deg);
-            box-shadow: 3px 3px 5px #ff004044;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(12px); }
-        }
-
-        /* ===== SECTIONS ===== */
-        section {
-            padding: 6rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section-title {
-            font-family: 'Creepster', cursive;
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            text-align: center;
-            margin-bottom: 3rem;
-            color: #ff0040;
-            text-shadow:
-                0 0 10px #ff0040,
-                0 0 20px #ff004088,
-                0 0 40px #ff004044;
-            animation: flicker 6s infinite alternate;
-        }
-
-        /* ===== ABOUT SECTION ===== */
-        .about-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            align-items: center;
-        }
-
-        .about-text {
-            font-size: 1.15rem;
-            line-height: 2;
-            color: #aaa;
-        }
-
-        .about-text .neon-highlight {
-            color: #00ffcc;
-            text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc88;
-            font-weight: bold;
-        }
-
-        .about-text .neon-red {
-            color: #ff0040;
-            text-shadow: 0 0 5px #ff0040, 0 0 10px #ff004088;
-            font-weight: bold;
-        }
-
-        .about-text .neon-orange {
-            color: #ff6600;
-            text-shadow: 0 0 5px #ff6600, 0 0 10px #ff660088;
-            font-weight: bold;
-        }
-
-        .about-image-wrapper {
-            position: relative;
-            border: 2px solid #ff004044;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow:
-                0 0 20px #ff004022,
-                inset 0 0 30px #00000088;
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-        }
-
-        .about-image-wrapper:hover {
-            transform: scale(1.02);
-            box-shadow:
-                0 0 40px #ff004044,
-                0 0 80px #ff004022,
-                inset 0 0 30px #00000088;
-        }
-
-        .about-image-wrapper img {
-            width: 100%;
-            display: block;
-            filter: brightness(0.8) contrast(1.1);
-            transition: filter 0.4s ease;
-        }
-
-        .about-image-wrapper:hover img {
-            filter: brightness(0.9) contrast(1.2);
-        }
-
-        /* ===== FEATURES ===== */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-        }
-
-        .feature-card {
-            background: rgba(10, 10, 10, 0.85);
-            border: 1px solid #ff004033;
-            border-radius: 12px;
-            padding: 2.5rem 2rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s ease;
+            font-weight: 500;
+            color: rgba(255,255,255,0.75);
+            margin-bottom: 1.8rem;
             backdrop-filter: blur(10px);
         }
 
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, #ff0040, transparent);
-            animation: scanLine 3s linear infinite;
+        .hero-badge .dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--emerald);
+            box-shadow: 0 0 8px var(--emerald-glow);
         }
 
-        @keyframes scanLine {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .feature-card:hover {
-            border-color: #ff004088;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 40px #ff004022;
-        }
-
-        .feature-icon {
-            font-size: 3rem;
+        .hero-title {
+            font-size: clamp(3.5rem, 10vw, 6.2rem);
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.04em;
             margin-bottom: 1.5rem;
+            background: linear-gradient(180deg, #fff 40%, rgba(255,255,255,0.45));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-desc {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            max-width: 540px;
+            margin: 0 auto 2.5rem;
+            font-weight: 400;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3.5rem;
+        }
+
+        .btn {
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 0.75rem 1.8rem;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn-white {
+            background: #fff;
+            color: #000;
+        }
+
+        .btn-white:hover {
+            background: rgba(255,255,255,0.92);
+            transform: translateY(-1px);
+        }
+
+        .btn-ghost {
+            background: var(--card);
+            color: rgba(255,255,255,0.85);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            background: var(--card-hover);
+            border-color: var(--border-hover);
+            color: #fff;
+        }
+
+        /* Hero showcase */
+        .hero-showcase {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 920px;
+            margin: 0 auto;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.05),
+                0 25px 70px rgba(0,0,0,0.6),
+                0 0 80px rgba(255,255,255,0.03);
+        }
+
+        .hero-showcase img {
+            width: 100%;
             display: block;
         }
 
-        .feature-card h3 {
-            font-family: 'Creepster', cursive;
-            font-size: 1.6rem;
-            color: #00ffcc;
-            text-shadow: 0 0 8px #00ffcc88;
-            margin-bottom: 1rem;
+        .shimmer {
+            position: relative;
+            overflow: hidden;
         }
 
-        .feature-card p {
-            color: #999;
-            line-height: 1.7;
-            font-size: 0.95rem;
+        .shimmer::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+            animation: shimmer 3s infinite;
         }
 
-        /* ===== GALLERY / SCREENSHOT ===== */
-        .gallery-section {
-            text-align: center;
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
-        .gallery-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-            max-width: 900px;
+        /* ===== SECTIONS ===== */
+        .section {
+            position: relative;
+            z-index: 1;
+            padding: 5.5rem 2rem;
+            max-width: 1100px;
             margin: 0 auto;
         }
 
-        .gallery-item {
-            position: relative;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 2px solid #ff004033;
-            box-shadow: 0 0 30px #ff004015;
-            transition: all 0.5s ease;
-        }
-
-        .gallery-item:hover {
-            border-color: #00ffcc66;
-            box-shadow:
-                0 0 40px #00ffcc22,
-                0 0 80px #00ffcc11;
-            transform: scale(1.01);
-        }
-
-        .gallery-item img {
-            width: 100%;
-            display: block;
-            filter: brightness(0.75) contrast(1.1);
-            transition: filter 0.5s ease;
-        }
-
-        .gallery-item:hover img {
-            filter: brightness(0.9) contrast(1.2);
-        }
-
-        .gallery-label {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 1.5rem;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
-            font-family: 'Creepster', cursive;
-            font-size: 1.4rem;
-            color: #ff6600;
-            text-shadow: 0 0 10px #ff6600, 0 0 20px #ff660066;
-            text-align: left;
-        }
-
-        /* ===== WARNING BANNER ===== */
-        .warning-banner {
-            background: repeating-linear-gradient(
-                45deg,
-                #1a1a00,
-                #1a1a00 10px,
-                #0a0a00 10px,
-                #0a0a00 20px
-            );
-            border-top: 3px solid #ff6600;
-            border-bottom: 3px solid #ff6600;
-            padding: 2rem;
+        .section-header {
             text-align: center;
-            margin: 4rem 0;
-            position: relative;
-            overflow: hidden;
+            margin-bottom: 3.2rem;
         }
 
-        .warning-banner::before {
-            content: '⚠ WARNING ⚠';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-family: 'Nosifer', cursive;
-            font-size: 8rem;
-            color: #ff660008;
-            white-space: nowrap;
-            pointer-events: none;
-        }
-
-        .warning-banner p {
-            font-family: 'Creepster', cursive;
-            font-size: clamp(1.2rem, 3vw, 2rem);
-            color: #ff6600;
-            text-shadow:
-                0 0 5px #ff6600,
-                0 0 15px #ff660088;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* ===== PLATFORM SECTION ===== */
-        .platform-section {
-            text-align: center;
-        }
-
-        .platform-badges {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            flex-wrap: wrap;
-            margin-top: 2rem;
-        }
-
-        .platform-badge {
-            background: rgba(10, 10, 10, 0.9);
-            border: 2px solid #00ffcc33;
-            border-radius: 16px;
-            padding: 2rem 3rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            transition: all 0.4s ease;
-            min-width: 180px;
-        }
-
-        .platform-badge:hover {
-            border-color: #00ffcc88;
-            box-shadow: 0 0 30px #00ffcc22;
-            transform: translateY(-5px);
-        }
-
-        .platform-badge .icon {
-            font-size: 3rem;
-        }
-
-        .platform-badge .name {
-            font-family: 'Creepster', cursive;
-            font-size: 1.3rem;
-            color: #00ffcc;
-            text-shadow: 0 0 5px #00ffcc88;
-        }
-
-        .platform-badge .status {
-            font-size: 0.85rem;
-            color: #ff004088;
+        .section-label {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.45);
+            letter-spacing: 0.15em;
             text-transform: uppercase;
-            letter-spacing: 0.2em;
+            margin-bottom: 0.8rem;
         }
 
-        /* ===== FOOTER ===== */
-        footer {
-            background: rgba(0, 0, 0, 0.9);
-            border-top: 1px solid #ff004022;
-            padding: 3rem 2rem;
-            text-align: center;
-        }
-
-        footer .footer-title {
-            font-family: 'Nosifer', cursive;
-            font-size: 2rem;
-            color: #ff0040;
-            text-shadow: 0 0 10px #ff004088;
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
             margin-bottom: 1rem;
         }
 
-        footer p {
-            color: #555;
-            font-size: 0.9rem;
+        .section-desc {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 540px;
+            margin: 0 auto;
+            line-height: 1.7;
         }
 
-        footer .footer-warning {
-            color: #ff6600;
-            text-shadow: 0 0 3px #ff660066;
-            font-family: 'Creepster', cursive;
-            font-size: 1.1rem;
+        /* ===== STATS ROW ===== */
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            padding: 2.8rem 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat { text-align: center; }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            background: linear-gradient(180deg, #fff, rgba(255,255,255,0.5));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+            font-weight: 500;
+        }
+
+        /* ===== ABOUT ===== */
+        .about-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3.5rem;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: clamp(1.8rem, 4vw, 2.4rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.3rem;
+            line-height: 1.25;
+        }
+
+        .about-text p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .about-text p strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .about-image {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+
+        .about-image img {
+            width: 100%;
+            display: block;
+            transition: transform 0.5s;
+        }
+
+        .about-image:hover img {
+            transform: scale(1.02);
+        }
+
+        /* ===== FULL IMAGE ===== */
+        .full-image {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .full-image img {
+            width: 100%;
+            display: block;
+        }
+
+        .full-image .overlay-content {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.52);
+            backdrop-filter: blur(2px);
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .full-image .overlay-content h2 {
+            font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.7rem;
+        }
+
+        .full-image .overlay-content p {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.7);
+            max-width: 440px;
+        }
+
+        /* ===== BENTO GRID ===== */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .bento-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem 1.6rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bento-card:hover {
+            background: var(--card-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .bento-card.span-2 { grid-column: span 2; }
+
+        .bento-card .card-icon {
+            width: 42px; height: 42px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .bento-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.01em;
+        }
+
+        .bento-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        /* ===== APP LAB / VRC REQUIREMENTS SECTION ===== */
+        .requirements-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .req-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.8rem;
+            transition: all 0.3s;
+        }
+
+        .req-card:hover {
+            background: var(--card-hover);
+            border-color: var(--border-hover);
+        }
+
+        .req-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.9rem;
+        }
+
+        .req-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .req-badge {
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 0.25rem 0.65rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            background: rgba(52, 211, 153, 0.08);
+            color: var(--emerald);
+            letter-spacing: 0.05em;
+        }
+
+        .req-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .req-list li {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .req-list li:last-child {
+            border-bottom: none;
+        }
+
+        .req-key {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .req-val {
+            color: #fff;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        /* VRC Checks Box */
+        .vrc-box {
+            background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.2rem;
             margin-top: 1.5rem;
         }
 
-        /* ===== ANIMATIONS ===== */
-        @keyframes flicker {
-            0%   { opacity: 1; }
-            5%   { opacity: 0.85; }
-            10%  { opacity: 1; }
-            15%  { opacity: 0.9; }
-            20%  { opacity: 1; }
-            50%  { opacity: 0.95; }
-            55%  { opacity: 0.8; }
-            57%  { opacity: 1; }
-            80%  { opacity: 0.97; }
-            85%  { opacity: 0.7; }
-            87%  { opacity: 1; }
-            100% { opacity: 0.95; }
+        .vrc-box h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
         }
 
-        @keyframes glitchText {
-            0%, 90%, 100% { transform: translateX(0); }
-            92% { transform: translateX(-3px); }
-            94% { transform: translateX(3px); }
-            96% { transform: translateX(-1px); }
-            98% { transform: translateX(1px); }
+        .vrc-box p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
         }
 
-        /* ===== REVEAL ON SCROLL ===== */
+        .vrc-items {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .vrc-item {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .vrc-code {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--emerald);
+            letter-spacing: 0.05em;
+            margin-bottom: 0.3rem;
+        }
+
+        .vrc-desc {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* ===== SCREENSHOTS ===== */
+        .image-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .image-card {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .image-card:hover {
+            border-color: var(--border-hover);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .image-card img {
+            width: 100%;
+            display: block;
+            transition: transform 0.5s;
+        }
+
+        .image-card:hover img {
+            transform: scale(1.03);
+        }
+
+        .image-card .caption {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 1.5rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        }
+
+        .image-card .caption h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .image-card .caption p {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 0.2rem;
+        }
+
+        /* ===== PLATFORMS ===== */
+        .platforms-row {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .platform-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2rem 2.4rem;
+            text-align: center;
+            min-width: 190px;
+            transition: all 0.3s;
+        }
+
+        .platform-card:hover {
+            background: var(--card-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-3px);
+        }
+
+        .platform-card .p-icon {
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .platform-card .p-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .platform-card .p-status {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* ===== FOOTER ===== */
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: var(--border);
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        footer {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .footer-left .f-logo {
+            font-size: 0.95rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+        }
+
+        .footer-left p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-right a {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-right a:hover {
+            color: #fff;
+        }
+
+        /* ===== AUDIO TOGGLE ===== */
+        .audio-toggle {
+            position: fixed;
+            bottom: 1.2rem;
+            right: 1.2rem;
+            z-index: 60;
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .audio-toggle:hover {
+            border-color: var(--border-hover);
+            color: #fff;
+        }
+
+        /* ===== REVEAL ===== */
         .reveal {
             opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
         }
 
         .reveal.visible {
@@ -609,310 +789,350 @@
             transform: translateY(0);
         }
 
-        /* ===== CUSTOM CURSOR GLOW ===== */
-        .cursor-glow {
-            position: fixed;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 0, 64, 0.06) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 99;
-            transform: translate(-50%, -50%);
-            transition: opacity 0.3s;
-        }
-
         /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .about-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .platform-badges {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            section {
-                padding: 4rem 1.5rem;
-            }
-        }
-
-        /* ===== AUDIO TOGGLE ===== */
-        .audio-toggle {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 200;
-            background: rgba(10, 10, 10, 0.9);
-            border: 1px solid #ff004044;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-            color: #ff0040;
-        }
-
-        .audio-toggle:hover {
-            border-color: #ff004088;
-            box-shadow: 0 0 20px #ff004033;
-        }
-
-        /* ===== GLITCH OVERLAY (random flash) ===== */
-        .glitch-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 98;
-            pointer-events: none;
-            opacity: 0;
-            background: #ff004008;
-            mix-blend-mode: overlay;
-        }
-
-        .glitch-overlay.flash {
-            animation: glitchFlash 0.15s linear;
-        }
-
-        @keyframes glitchFlash {
-            0%   { opacity: 0; }
-            20%  { opacity: 0.5; }
-            40%  { opacity: 0; }
-            60%  { opacity: 0.3; }
-            100% { opacity: 0; }
+        @media (max-width: 850px) {
+            .bento-grid { grid-template-columns: 1fr; }
+            .bento-card.span-2 { grid-column: span 1; }
+            .about-row { grid-template-columns: 1fr; }
+            .image-row { grid-template-columns: 1fr; }
+            .requirements-grid { grid-template-columns: 1fr; }
+            .vrc-items { grid-template-columns: 1fr 1fr; }
+            .stats-row { gap: 2rem; flex-wrap: wrap; }
+            .nav-links { display: none; }
+            footer { flex-direction: column; text-align: center; }
+            .footer-right { justify-content: center; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ENTER GATE (click to start audio & enter) -->
-    <div class="enter-gate" id="enterGate">
-        <h1>BELOW</h1>
-        <p>▸ Click anywhere to enter ◂</p>
-    </div>
-
-    <!-- Background music -->
     <audio id="bgMusic" loop preload="auto">
         <source src="assets/bgmusic-loop.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- Fixed background -->
-    <div class="bg-fixed"></div>
-    <div class="bg-overlay"></div>
+    <div class="dot-grid"></div>
+    <div class="glow-orb"></div>
 
-    <!-- Scanlines CRT effect -->
-    <div class="scanlines"></div>
+    <!-- NAV -->
+    <nav>
+        <a href="#" class="nav-logo">Below</a>
+        <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#vrc-requirements">App Lab Specs</a></li>
+            <li><a href="#screenshots">Screenshots</a></li>
+            <li><a href="terms.html">Terms</a></li>
+            <li><a href="privacy.html">Privacy</a></li>
+            <li><a href="#platforms" class="nav-btn">Get Started</a></li>
+        </ul>
+    </nav>
 
-    <!-- Floating ember particles -->
-    <div class="particles" id="particles"></div>
-
-    <!-- Cursor glow -->
-    <div class="cursor-glow" id="cursorGlow"></div>
-
-    <!-- Glitch flash overlay -->
-    <div class="glitch-overlay" id="glitchOverlay"></div>
-
-    <!-- ===== MAIN CONTENT ===== -->
-    <div class="main-content">
-
-        <!-- HERO SECTION -->
-        <section class="hero">
-            <img src="assets/header.png" alt="Below — The Darkness Awaits" class="hero-image">
-            <div class="hero-content">
-                <h1 class="hero-title">BELOW</h1>
-                <p class="hero-subtitle">Descend into the unknown</p>
-                <p class="hero-tagline">A VR horror experience that will make you question what lurks in the shadows. Something is watching. Something is waiting. Something is... <em>below.</em></p>
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-glow"></div>
+        <div class="hero-content reveal">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                Meta Quest App Lab • Submission Ready
             </div>
-            <div class="scroll-indicator">
-                <span>Scroll if you dare</span>
-                <div class="scroll-arrow"></div>
+            <h1 class="hero-title">Below</h1>
+            <p class="hero-desc">An immersive VR adventure built for Meta Quest. Explore vast forests, uncover hidden secrets, and venture into the unknown.</p>
+            <div class="hero-buttons">
+                <a href="#vrc-requirements" class="btn btn-white">App Lab Specs →</a>
+                <a href="#screenshots" class="btn btn-ghost">Screenshots</a>
             </div>
-        </section>
-
-        <!-- ABOUT SECTION -->
-        <section id="about">
-            <h2 class="section-title reveal">What is Below?</h2>
-            <div class="about-grid">
-                <div class="about-text reveal">
-                    <p>
-                        <span class="neon-red">BELOW</span> is a spine-chilling VR horror game built for
-                        <span class="neon-highlight">Meta Quest</span>. You wake up in a decaying forest
-                        overrun with twisted trees and forgotten ruins. The air is thick. The ground trembles.
-                    </p>
-                    <br>
-                    <p>
-                        Explore the <span class="neon-orange">Danger Forest</span> — a quarantined zone where
-                        the boundary between our world and something far more sinister has shattered.
-                        Navigate treacherous paths, uncover dark secrets, and survive what lies beneath.
-                    </p>
-                    <br>
-                    <p>
-                        Every shadow hides a threat. Every sound could be your last warning.
-                        <span class="neon-red">Do not look behind you.</span>
-                    </p>
-                </div>
-                <div class="about-image-wrapper reveal">
-                    <img src="assets/gallery.png" alt="Below — Forest Overview">
-                </div>
-            </div>
-        </section>
-
-        <!-- WARNING BANNER -->
-        <div class="warning-banner reveal">
-            <p>⚠ THIS AREA HAS BEEN QUARANTINED — ENTER AT YOUR OWN RISK ⚠</p>
         </div>
+        <div class="hero-showcase shimmer reveal">
+            <img src="assets/header.png" alt="Below — VR Game">
+        </div>
+    </section>
 
-        <!-- FEATURES SECTION -->
-        <section id="features">
-            <h2 class="section-title reveal">The Horrors That Await</h2>
-            <div class="features-grid">
-                <div class="feature-card reveal">
-                    <span class="feature-icon">🌲</span>
-                    <h3>Danger Forest</h3>
-                    <p>A quarantined forest where twisted trees claw at a blood-red sky. Monsters lurk behind every bark-stripped trunk.</p>
-                </div>
-                <div class="feature-card reveal">
-                    <span class="feature-icon">👁️</span>
-                    <h3>Full VR Immersion</h3>
-                    <p>Built for Meta Quest. Feel the terror surround you in full 360° as the forest breathes down your neck.</p>
-                </div>
-                <div class="feature-card reveal">
-                    <span class="feature-icon">🔦</span>
-                    <h3>Dynamic Darkness</h3>
-                    <p>Your flashlight is your only friend — and its battery is dying. Navigate pitch-black corridors of fear.</p>
-                </div>
-                <div class="feature-card reveal">
-                    <span class="feature-icon">💀</span>
-                    <h3>Unspeakable Creatures</h3>
-                    <p>They were human once. Now they roam the forest, drawn to sound. Stay quiet. Stay alive.</p>
-                </div>
-                <div class="feature-card reveal">
-                    <span class="feature-icon">🗝️</span>
-                    <h3>Dark Secrets</h3>
-                    <p>Discover what caused the quarantine. Piece together journals and clues before time runs out.</p>
-                </div>
-                <div class="feature-card reveal">
-                    <span class="feature-icon">🎧</span>
-                    <h3>3D Spatial Audio</h3>
-                    <p>Hear every twig snap, every distant scream, every breath that isn't yours — all around you.</p>
-                </div>
+    <!-- STATS -->
+    <div class="section">
+        <div class="stats-row reveal">
+            <div class="stat">
+                <div class="stat-value">VR</div>
+                <div class="stat-label">Platform</div>
             </div>
-        </section>
-
-        <!-- GALLERY SECTION -->
-        <section class="gallery-section" id="gallery">
-            <h2 class="section-title reveal">Glimpse the Darkness</h2>
-            <div class="gallery-container">
-                <div class="gallery-item reveal">
-                    <img src="assets/header.png" alt="Below — Dead Forest Skyline">
-                    <div class="gallery-label">The Dead Forest — Dusk Falls</div>
-                </div>
-                <div class="gallery-item reveal">
-                    <img src="assets/background.png" alt="Below — Danger Forest Entrance">
-                    <div class="gallery-label">Danger Forest — Entry Gate</div>
-                </div>
-                <div class="gallery-item reveal">
-                    <img src="assets/gallery.png" alt="Below — Forest Overlook">
-                    <div class="gallery-label">The Overlook — No Way Back</div>
-                </div>
+            <div class="stat">
+                <div class="stat-value">Meta Quest</div>
+                <div class="stat-label">Headset Series</div>
             </div>
-        </section>
-
-        <!-- PLATFORM SECTION -->
-        <section class="platform-section" id="platform">
-            <h2 class="section-title reveal">Available On</h2>
-            <div class="platform-badges reveal">
-                <div class="platform-badge">
-                    <span class="icon">🥽</span>
-                    <span class="name">Meta Quest</span>
-                    <span class="status">Coming Soon</span>
-                </div>
-                <div class="platform-badge">
-                    <span class="icon">🎮</span>
-                    <span class="name">Meta Quest 3</span>
-                    <span class="status">Coming Soon</span>
-                </div>
-                <div class="platform-badge">
-                    <span class="icon">🖥️</span>
-                    <span class="name">SideQuest</span>
-                    <span class="status">Planned</span>
-                </div>
+            <div class="stat">
+                <div class="stat-value">BelowTeam</div>
+                <div class="stat-label">Developer</div>
             </div>
-        </section>
-
-        <!-- FOOTER -->
-        <footer>
-            <div class="footer-title">BELOW</div>
-            <p>© 2026 BelowTeam. All rights reserved.</p>
-            <p class="footer-warning">You have been warned.</p>
-        </footer>
-
+            <div class="stat">
+                <div class="stat-value">Foet555</div>
+                <div class="stat-label">Publisher</div>
+            </div>
+        </div>
     </div>
 
-    <!-- Audio toggle button -->
+    <!-- ABOUT -->
+    <div class="section" id="about">
+        <div class="about-row">
+            <div class="about-text reveal">
+                <span class="section-label">About the Game</span>
+                <h2>Step into a world beyond</h2>
+                <p>
+                    <strong>Below</strong> is an immersive VR adventure game built for
+                    <strong>Meta Quest</strong>. Wake up in a sprawling forest full of
+                    towering trees, mysterious structures, and paths that lead somewhere
+                    unexpected.
+                </p>
+                <p>
+                    Explore the <strong>Danger Forest</strong> zone, navigate winding
+                    trails through dense woodlands, and discover what lies beyond
+                    the fences. Every corner holds something new.
+                </p>
+            </div>
+            <div class="about-image reveal">
+                <img src="assets/gallery.png" alt="Below — Forest Overview">
+            </div>
+        </div>
+    </div>
+
+    <!-- FULL WIDTH PARALLAX BANNER -->
+    <div style="padding: 0 2rem;">
+        <div class="full-image shimmer reveal">
+            <img src="assets/background.png" alt="Danger Forest Gate">
+            <div class="overlay-content">
+                <h2>Enter the Danger Forest</h2>
+                <p>Cross through the gates and discover what awaits on the other side.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="section" id="features">
+        <div class="section-header reveal">
+            <span class="section-label">Features</span>
+            <h2 class="section-title">What makes Below special</h2>
+            <p class="section-desc">Built from the ground up for virtual reality with a focus on exploration, atmosphere, and discovery.</p>
+        </div>
+        <div class="bento-grid">
+            <div class="bento-card span-2 reveal">
+                <div class="card-icon">🌲</div>
+                <h3>Expansive Forests</h3>
+                <p>Wander through vast, detailed forests with towering trees and atmospheric lighting that shifts as time passes. Each area feels unique and alive.</p>
+            </div>
+            <div class="bento-card reveal">
+                <div class="card-icon">🥽</div>
+                <h3>Built for VR</h3>
+                <p>Designed natively for Meta Quest with intuitive 6DoF hand controls and 360° immersion.</p>
+            </div>
+            <div class="bento-card reveal">
+                <div class="card-icon">🗺️</div>
+                <h3>Open Exploration</h3>
+                <p>No rigid linear paths — explore freely across multiple forest biomes at your own pace.</p>
+            </div>
+            <div class="bento-card reveal">
+                <div class="card-icon">🏗️</div>
+                <h3>Unique Structures</h3>
+                <p>Find observation points, fences, and mysterious installations across the landscape.</p>
+            </div>
+            <div class="bento-card reveal">
+                <div class="card-icon">🎵</div>
+                <h3>Ambient Soundtrack</h3>
+                <p>A soothing, atmospheric soundtrack that draws you deeper into the world.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- APP LAB & VR REQUIREMENTS SECTION -->
+    <div class="section" id="vrc-requirements">
+        <div class="section-header reveal">
+            <span class="section-label">Meta Quest App Lab</span>
+            <h2 class="section-title">System & VR Requirements</h2>
+            <p class="section-desc">Detailed hardware specifications, boundary modes, and Virtual Reality Check (VRC) compliance standards for Below.</p>
+        </div>
+
+        <div class="requirements-grid reveal">
+            <div class="req-card">
+                <div class="req-header">
+                    <span class="req-title">Hardware & Target Devices</span>
+                    <span class="req-badge">Verified</span>
+                </div>
+                <ul class="req-list">
+                    <li>
+                        <span class="req-key">Supported Headsets</span>
+                        <span class="req-val">Meta Quest 2, Quest 3, Quest 3S, Pro</span>
+                    </li>
+                    <li>
+                        <span class="req-key">Controllers</span>
+                        <span class="req-val">Touch / Touch Plus (6DoF)</span>
+                    </li>
+                    <li>
+                        <span class="req-key">Target Refresh Rate</span>
+                        <span class="req-val">72 Hz / 90 Hz native</span>
+                    </li>
+                    <li>
+                        <span class="req-key">Storage Space</span>
+                        <span class="req-val">~1.2 GB required</span>
+                    </li>
+                    <li>
+                        <span class="req-key">Internet Connection</span>
+                        <span class="req-val">Offline playable (Single-player)</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="req-card">
+                <div class="req-header">
+                    <span class="req-title">Play Modes & Comfort</span>
+                    <span class="req-badge">App Lab</span>
+                </div>
+                <ul class="req-list">
+                    <li>
+                        <span class="req-key">Play Area</span>
+                        <span class="req-val">Standing, Roomscale, Seated</span>
+                    </li>
+                    <li>
+                        <span class="req-key">Boundary System</span>
+                        <span class="req-val">Guardian / Room Boundary 6DoF</span>
+                    </li>
+                    <li>
+                        <span class="req-key">Locomotion</span>
+                        <span class="req-val">Smooth movement & Teleport</span>
+                    </li>
+                    <li>
+                        <span class="req-key">Turning Options</span>
+                        <span class="req-val">Snap turn (30°/45°) & Smooth turn</span>
+                    </li>
+                    <li>
+                        <span class="req-key">Comfort Rating</span>
+                        <span class="req-val">Comfortable / Moderate</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- VRC Compliance Matrix -->
+        <div class="vrc-box reveal">
+            <h3>🛡️ Virtual Reality Checks (VRC) Status</h3>
+            <p>Below meets Meta's App Lab and Horizon Store submission guidelines to ensure player safety, data protection, and performance stability.</p>
+
+            <div class="vrc-items">
+                <div class="vrc-item">
+                    <div class="vrc-code">VRC.Publishing.1</div>
+                    <div class="vrc-desc">Proper application manifest, package names, and versioning</div>
+                </div>
+                <div class="vrc-item">
+                    <div class="vrc-code">VRC.Publishing.2</div>
+                    <div class="vrc-desc">Correct assets, icons, screenshots, and metadata formatting</div>
+                </div>
+                <div class="vrc-item">
+                    <div class="vrc-code">VRC.Publishing.3</div>
+                    <div class="vrc-desc">Graceful error handling, input responsiveness, and exit flow</div>
+                </div>
+                <div class="vrc-item">
+                    <div class="vrc-code">VRC.Quest.Privacy.1</div>
+                    <div class="vrc-desc">Public Privacy Policy and user data protection compliance</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREENSHOTS -->
+    <div class="section" id="screenshots">
+        <div class="section-header reveal">
+            <span class="section-label">Gallery</span>
+            <h2 class="section-title">See the world of Below</h2>
+        </div>
+        <div class="image-row">
+            <div class="image-card reveal">
+                <img src="assets/header.png" alt="Dead Forest">
+                <div class="caption">
+                    <h3>The Dead Forest</h3>
+                    <p>Dusk falls over the horizon</p>
+                </div>
+            </div>
+            <div class="image-card reveal">
+                <img src="assets/gallery.png" alt="Forest Overlook">
+                <div class="caption">
+                    <h3>The Overlook</h3>
+                    <p>A vantage point above the trees</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PLATFORMS -->
+    <div class="section" id="platforms">
+        <div class="section-header reveal">
+            <span class="section-label">Platforms</span>
+            <h2 class="section-title">Where to play</h2>
+            <p class="section-desc">Below is being developed for Meta Quest headsets with App Lab release channels.</p>
+        </div>
+        <div class="platforms-row reveal">
+            <div class="platform-card">
+                <div class="p-icon">🥽</div>
+                <div class="p-name">Meta Quest 2</div>
+                <div class="p-status">App Lab</div>
+            </div>
+            <div class="platform-card">
+                <div class="p-icon">🎮</div>
+                <div class="p-name">Meta Quest 3 / 3S</div>
+                <div class="p-status">App Lab</div>
+            </div>
+            <div class="platform-card">
+                <div class="p-icon">📦</div>
+                <div class="p-name">SideQuest</div>
+                <div class="p-status">Planned</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="divider"></div>
+    <footer>
+        <div class="footer-left">
+            <div class="f-logo">Below</div>
+            <p>© 2026 BelowTeam (Publisher: Foet555). All rights reserved.</p>
+        </div>
+        <div class="footer-right">
+            <a href="#about">About</a>
+            <a href="#features">Features</a>
+            <a href="#vrc-requirements">App Lab Specs</a>
+            <a href="#screenshots">Screenshots</a>
+            <a href="terms.html">Terms of Service</a>
+            <a href="privacy.html">Privacy Policy</a>
+        </div>
+    </footer>
+
+    <!-- Audio toggle -->
     <button class="audio-toggle" id="audioToggle" title="Toggle Music">🔊</button>
 
     <script>
-        // ===== ENTER GATE =====
-        const gate = document.getElementById('enterGate');
+        // Audio playback
         const music = document.getElementById('bgMusic');
         const toggleBtn = document.getElementById('audioToggle');
+        let audioPlaying = false;
 
-        gate.addEventListener('click', () => {
-            gate.classList.add('hidden');
-            music.volume = 0.35;
-            music.play().catch(() => {});
-        });
+        document.addEventListener('click', () => {
+            if (!audioPlaying) {
+                music.volume = 0.2;
+                music.play().catch(() => {});
+                audioPlaying = true;
+            }
+        }, { once: true });
 
-        // ===== AUDIO TOGGLE =====
-        let audioPlaying = true;
-        toggleBtn.addEventListener('click', () => {
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             if (audioPlaying) {
                 music.pause();
                 toggleBtn.textContent = '🔇';
+                audioPlaying = false;
             } else {
+                music.volume = 0.2;
                 music.play();
                 toggleBtn.textContent = '🔊';
+                audioPlaying = true;
             }
-            audioPlaying = !audioPlaying;
         });
 
-        // ===== FLOATING PARTICLES =====
-        const particlesContainer = document.getElementById('particles');
-        function createParticle() {
-            const p = document.createElement('div');
-            p.classList.add('particle');
-            const size = Math.random() * 4 + 1;
-            const isRed = Math.random() > 0.5;
-            p.style.width = size + 'px';
-            p.style.height = size + 'px';
-            p.style.left = Math.random() * 100 + '%';
-            p.style.background = isRed
-                ? `rgba(255, ${Math.floor(Math.random()*30)}, ${Math.floor(Math.random()*60)}, 0.8)`
-                : `rgba(255, ${Math.floor(150+Math.random()*100)}, 0, 0.6)`;
-            p.style.boxShadow = isRed
-                ? '0 0 6px #ff0040'
-                : '0 0 4px #ff6600';
-            p.style.animationDuration = (Math.random() * 8 + 6) + 's';
-            p.style.animationDelay = Math.random() * 5 + 's';
-            particlesContainer.appendChild(p);
-            setTimeout(() => p.remove(), 15000);
-        }
-        setInterval(createParticle, 400);
-
-        // ===== CURSOR GLOW =====
-        const cursorGlow = document.getElementById('cursorGlow');
-        document.addEventListener('mousemove', (e) => {
-            cursorGlow.style.left = e.clientX + 'px';
-            cursorGlow.style.top = e.clientY + 'px';
-        });
-
-        // ===== SCROLL REVEAL =====
+        // Scroll reveal
         const reveals = document.querySelectorAll('.reveal');
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -920,28 +1140,8 @@
                     entry.target.classList.add('visible');
                 }
             });
-        }, { threshold: 0.15 });
+        }, { threshold: 0.1 });
         reveals.forEach(el => observer.observe(el));
-
-        // ===== RANDOM GLITCH FLASH =====
-        const glitchOverlay = document.getElementById('glitchOverlay');
-        function triggerGlitch() {
-            glitchOverlay.classList.add('flash');
-            setTimeout(() => glitchOverlay.classList.remove('flash'), 200);
-            setTimeout(triggerGlitch, Math.random() * 12000 + 5000);
-        }
-        setTimeout(triggerGlitch, 3000);
-
-        // ===== RANDOM FLICKER ON TITLE =====
-        const heroTitle = document.querySelector('.hero-title');
-        function randomFlicker() {
-            if (heroTitle) {
-                heroTitle.style.opacity = (Math.random() * 0.3 + 0.7).toString();
-                setTimeout(() => { heroTitle.style.opacity = '1'; }, 100);
-            }
-            setTimeout(randomFlicker, Math.random() * 8000 + 3000);
-        }
-        randomFlicker();
     </script>
 
 </body>

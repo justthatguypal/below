@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy — Below VR</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #050505;
+            --card: rgba(255,255,255,0.03);
+            --card-hover: rgba(255,255,255,0.06);
+            --border: rgba(255,255,255,0.08);
+            --border-hover: rgba(255,255,255,0.15);
+            --text: #fff;
+            --text-secondary: rgba(255,255,255,0.65);
+            --text-muted: rgba(255,255,255,0.4);
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        * { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.18) #050505; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 10px; }
+
+        .dot-grid {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image: radial-gradient(circle at center, rgba(255,255,255,0.06) 1px, transparent 1px);
+            background-size: 24px 24px;
+            pointer-events: none;
+        }
+
+        nav {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            z-index: 50;
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-logo {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: #fff; }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 7rem 2rem 5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 0.35rem 0.9rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 5vw, 3.2rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.8rem;
+            background: linear-gradient(180deg, #fff 50%, rgba(255,255,255,0.5));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .updated-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-block {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-block h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #fff;
+            margin-bottom: 0.8rem;
+        }
+
+        .section-block p, .section-block li {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.8rem;
+        }
+
+        .section-block ul {
+            padding-left: 1.3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .section-block li { margin-bottom: 0.4rem; }
+
+        footer {
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid var(--border);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin: 0 0.6rem;
+        }
+        footer a:hover { color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="dot-grid"></div>
+
+    <nav>
+        <a href="index.html" class="nav-logo">Below</a>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#vrc-requirements">App Lab Specs</a></li>
+            <li><a href="privacy.html" style="color: #fff;">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <span class="badge">VRC.Quest.Privacy.1 Compliant</span>
+        <h1>Privacy Policy</h1>
+        <p class="updated-date">Effective Date: October 18, 2026 • Developer: BelowTeam • Publisher: Foet555</p>
+
+        <div class="section-block">
+            <h2>1. Overview</h2>
+            <p><strong>BelowTeam</strong> ("we", "us", or "our") respects your privacy. This Privacy Policy explains how information is collected, used, and protected when you play <strong>Below</strong> on Meta Quest devices and related services.</p>
+            <p>This policy is designed to satisfy Meta Quest Store & App Lab Virtual Reality Check (<strong>VRC.Quest.Privacy.1</strong>) compliance guidelines.</p>
+        </div>
+
+        <div class="section-block">
+            <h2>2. Information We Collect</h2>
+            <p>We believe in minimal data collection to ensure player privacy and smooth VR performance:</p>
+            <ul>
+                <li><strong>Gameplay Progress & Local Preferences:</strong> Settings such as locomotion style (teleport/smooth), audio volumes, comfort vignettes, and save states are stored locally on your Meta Quest headset.</li>
+                <li><strong>Headset & System Diagnostics:</strong> Hardware type (e.g. Meta Quest 2, Meta Quest 3, Quest Pro), framerate performance, and crash logs may be collected through standard Meta platform analytics to help us diagnose bugs and maintain framerate targets (72/90/120 Hz).</li>
+                <li><strong>User Identity:</strong> Your Meta User ID or username may be utilized for local player profiles and leaderboard/multiplayer integration if enabled.</li>
+            </ul>
+        </div>
+
+        <div class="section-block">
+            <h2>3. Information We Do NOT Collect</h2>
+            <ul>
+                <li>We do NOT collect raw microphone audio without your consent.</li>
+                <li>We do NOT collect or store Guardian/Boundary passthrough camera data or room scans.</li>
+                <li>We do NOT sell, rent, or monetize your personal data to third-party advertisers.</li>
+            </ul>
+        </div>
+
+        <div class="section-block">
+            <h2>4. Meta Platform Data</h2>
+            <p>As a title operating within the Meta Quest ecosystem, certain data processing is governed by Meta's Privacy Policy. For more information regarding Meta account data handling, visit Meta's Privacy Center.</p>
+        </div>
+
+        <div class="section-block">
+            <h2>5. Data Retention & Deletion</h2>
+            <p>All local game saves and preference files can be deleted at any time by uninstalling the application from your Meta Quest library or clearing the application data from Quest headset storage settings.</p>
+        </div>
+
+        <div class="section-block">
+            <h2>6. Contact Us</h2>
+            <p>If you have any questions about this Privacy Policy or wish to request data assistance, please contact us via our developer channel or repository:</p>
+            <p><strong>Developer:</strong> BelowTeam (Publisher: Foet555)<br>
+            <strong>GitHub:</strong> <a href="https://github.com/justthatguypal/below" style="color: #fff;">github.com/justthatguypal/below</a></p>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 BelowTeam (Foet555). All rights reserved.</p>
+        <p style="margin-top: 0.5rem;">
+            <a href="index.html">Home</a> •
+            <a href="index.html#vrc-requirements">App Lab Specs</a> •
+            <a href="privacy.html">Privacy Policy</a> •
+            <a href="terms.html">Terms of Service</a>
+        </p>
+    </footer>
+</body>
+</html>

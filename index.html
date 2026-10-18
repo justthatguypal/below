@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BELOW — Enter the Darkness</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&family=Special+Elite&display=swap" rel="stylesheet">
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: #ff0040 #0a0a0a;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #c8c8c8;
+            font-family: 'Special Elite', cursive;
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        /* ===== FIXED BACKGROUND ===== */
+        .bg-fixed {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -2;
+            background: url('assets/background.png') center center / cover no-repeat;
+            filter: brightness(0.25) saturate(1.4) contrast(1.2);
+        }
+
+        /* Dark overlay with vignette */
+        .bg-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.85) 100%);
+            pointer-events: none;
+        }
+
+        /* ===== FLOATING PARTICLES (fog/embers) ===== */
+        .particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0%   { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
+            10%  { opacity: 0.6; }
+            90%  { opacity: 0.3; }
+            100% { transform: translateY(-20vh) translateX(80px) scale(1); opacity: 0; }
+        }
+
+        /* ===== AUDIO ENTER GATE ===== */
+        .enter-gate {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 9999;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .enter-gate.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .enter-gate h1 {
+            font-family: 'Nosifer', cursive;
+            font-size: clamp(3rem, 8vw, 7rem);
+            color: #ff0040;
+            text-shadow:
+                0 0 10px #ff0040,
+                0 0 20px #ff0040,
+                0 0 40px #ff003388,
+                0 0 80px #ff003355;
+            animation: flicker 3s infinite alternate;
+            letter-spacing: 0.15em;
+        }
+
+        .enter-gate p {
+            font-family: 'Special Elite', cursive;
+            font-size: 1.2rem;
+            color: #ff004088;
+            margin-top: 2rem;
+            animation: pulse 2s ease-in-out infinite;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== HEADER / HERO ===== */
+        .hero {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            filter: brightness(0.35) saturate(1.3) contrast(1.1);
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .hero-title {
+            font-family: 'Nosifer', cursive;
+            font-size: clamp(4rem, 12vw, 10rem);
+            color: #ff0040;
+            text-shadow:
+                0 0 7px #ff0040,
+                0 0 15px #ff0040,
+                0 0 30px #ff004099,
+                0 0 60px #ff004066,
+                0 0 100px #ff004033,
+                0 0 150px #cc003322;
+            animation: flicker 4s infinite alternate;
+            letter-spacing: 0.2em;
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-family: 'Creepster', cursive;
+            font-size: clamp(1rem, 3vw, 2rem);
+            color: #00ffcc;
+            text-shadow:
+                0 0 5px #00ffcc,
+                0 0 15px #00ffcc88,
+                0 0 30px #00ffcc44;
+            margin-top: 1.5rem;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            animation: glitchText 5s infinite;
+        }
+
+        .hero-tagline {
+            font-family: 'Special Elite', cursive;
+            font-size: clamp(0.9rem, 2vw, 1.4rem);
+            color: #ff6600;
+            text-shadow:
+                0 0 5px #ff6600,
+                0 0 15px #ff660088;
+            margin-top: 2rem;
+            max-width: 600px;
+            line-height: 1.8;
+            opacity: 0.9;
+        }
+
+        /* Blood drip from hero bottom */
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 80' preserveAspectRatio='none'%3E%3Cpath d='M0,0 C100,0 100,40 150,60 C180,70 200,80 200,80 L200,0 Z' fill='%23ff004022'/%3E%3Cpath d='M300,0 C350,0 380,50 400,70 C410,75 420,80 420,80 L420,0 Z' fill='%23ff004018'/%3E%3Cpath d='M600,0 C650,0 670,30 700,55 C720,65 740,80 740,80 L740,0 Z' fill='%23ff004020'/%3E%3Cpath d='M900,0 C950,0 960,45 1000,65 C1020,72 1050,80 1050,80 L1050,0 Z' fill='%23ff004015'/%3E%3C/svg%3E") repeat-x;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* Scan line effect */
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 100;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.05) 2px,
+                rgba(0, 0, 0, 0.05) 4px
+            );
+        }
+
+        /* ===== SCROLL INDICATOR ===== */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .scroll-indicator span {
+            color: #ff004088;
+            font-size: 0.8rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+        }
+
+        .scroll-arrow {
+            width: 24px;
+            height: 24px;
+            border-right: 2px solid #ff0040;
+            border-bottom: 2px solid #ff0040;
+            transform: rotate(45deg);
+            box-shadow: 3px 3px 5px #ff004044;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(12px); }
+        }
+
+        /* ===== SECTIONS ===== */
+        section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: 'Creepster', cursive;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #ff0040;
+            text-shadow:
+                0 0 10px #ff0040,
+                0 0 20px #ff004088,
+                0 0 40px #ff004044;
+            animation: flicker 6s infinite alternate;
+        }
+
+        /* ===== ABOUT SECTION ===== */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .about-text {
+            font-size: 1.15rem;
+            line-height: 2;
+            color: #aaa;
+        }
+
+        .about-text .neon-highlight {
+            color: #00ffcc;
+            text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc88;
+            font-weight: bold;
+        }
+
+        .about-text .neon-red {
+            color: #ff0040;
+            text-shadow: 0 0 5px #ff0040, 0 0 10px #ff004088;
+            font-weight: bold;
+        }
+
+        .about-text .neon-orange {
+            color: #ff6600;
+            text-shadow: 0 0 5px #ff6600, 0 0 10px #ff660088;
+            font-weight: bold;
+        }
+
+        .about-image-wrapper {
+            position: relative;
+            border: 2px solid #ff004044;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow:
+                0 0 20px #ff004022,
+                inset 0 0 30px #00000088;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .about-image-wrapper:hover {
+            transform: scale(1.02);
+            box-shadow:
+                0 0 40px #ff004044,
+                0 0 80px #ff004022,
+                inset 0 0 30px #00000088;
+        }
+
+        .about-image-wrapper img {
+            width: 100%;
+            display: block;
+            filter: brightness(0.8) contrast(1.1);
+            transition: filter 0.4s ease;
+        }
+
+        .about-image-wrapper:hover img {
+            filter: brightness(0.9) contrast(1.2);
+        }
+
+        /* ===== FEATURES ===== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(10, 10, 10, 0.85);
+            border: 1px solid #ff004033;
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, #ff0040, transparent);
+            animation: scanLine 3s linear infinite;
+        }
+
+        @keyframes scanLine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .feature-card:hover {
+            border-color: #ff004088;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px #ff004022;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-family: 'Creepster', cursive;
+            font-size: 1.6rem;
+            color: #00ffcc;
+            text-shadow: 0 0 8px #00ffcc88;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #999;
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        /* ===== GALLERY / SCREENSHOT ===== */
+        .gallery-section {
+            text-align: center;
+        }
+
+        .gallery-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #ff004033;
+            box-shadow: 0 0 30px #ff004015;
+            transition: all 0.5s ease;
+        }
+
+        .gallery-item:hover {
+            border-color: #00ffcc66;
+            box-shadow:
+                0 0 40px #00ffcc22,
+                0 0 80px #00ffcc11;
+            transform: scale(1.01);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            display: block;
+            filter: brightness(0.75) contrast(1.1);
+            transition: filter 0.5s ease;
+        }
+
+        .gallery-item:hover img {
+            filter: brightness(0.9) contrast(1.2);
+        }
+
+        .gallery-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            font-family: 'Creepster', cursive;
+            font-size: 1.4rem;
+            color: #ff6600;
+            text-shadow: 0 0 10px #ff6600, 0 0 20px #ff660066;
+            text-align: left;
+        }
+
+        /* ===== WARNING BANNER ===== */
+        .warning-banner {
+            background: repeating-linear-gradient(
+                45deg,
+                #1a1a00,
+                #1a1a00 10px,
+                #0a0a00 10px,
+                #0a0a00 20px
+            );
+            border-top: 3px solid #ff6600;
+            border-bottom: 3px solid #ff6600;
+            padding: 2rem;
+            text-align: center;
+            margin: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .warning-banner::before {
+            content: '⚠ WARNING ⚠';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Nosifer', cursive;
+            font-size: 8rem;
+            color: #ff660008;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .warning-banner p {
+            font-family: 'Creepster', cursive;
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            color: #ff6600;
+            text-shadow:
+                0 0 5px #ff6600,
+                0 0 15px #ff660088;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== PLATFORM SECTION ===== */
+        .platform-section {
+            text-align: center;
+        }
+
+        .platform-badges {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .platform-badge {
+            background: rgba(10, 10, 10, 0.9);
+            border: 2px solid #00ffcc33;
+            border-radius: 16px;
+            padding: 2rem 3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.4s ease;
+            min-width: 180px;
+        }
+
+        .platform-badge:hover {
+            border-color: #00ffcc88;
+            box-shadow: 0 0 30px #00ffcc22;
+            transform: translateY(-5px);
+        }
+
+        .platform-badge .icon {
+            font-size: 3rem;
+        }
+
+        .platform-badge .name {
+            font-family: 'Creepster', cursive;
+            font-size: 1.3rem;
+            color: #00ffcc;
+            text-shadow: 0 0 5px #00ffcc88;
+        }
+
+        .platform-badge .status {
+            font-size: 0.85rem;
+            color: #ff004088;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: rgba(0, 0, 0, 0.9);
+            border-top: 1px solid #ff004022;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        footer .footer-title {
+            font-family: 'Nosifer', cursive;
+            font-size: 2rem;
+            color: #ff0040;
+            text-shadow: 0 0 10px #ff004088;
+            margin-bottom: 1rem;
+        }
+
+        footer p {
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        footer .footer-warning {
+            color: #ff6600;
+            text-shadow: 0 0 3px #ff660066;
+            font-family: 'Creepster', cursive;
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes flicker {
+            0%   { opacity: 1; }
+            5%   { opacity: 0.85; }
+            10%  { opacity: 1; }
+            15%  { opacity: 0.9; }
+            20%  { opacity: 1; }
+            50%  { opacity: 0.95; }
+            55%  { opacity: 0.8; }
+            57%  { opacity: 1; }
+            80%  { opacity: 0.97; }
+            85%  { opacity: 0.7; }
+            87%  { opacity: 1; }
+            100% { opacity: 0.95; }
+        }
+
+        @keyframes glitchText {
+            0%, 90%, 100% { transform: translateX(0); }
+            92% { transform: translateX(-3px); }
+            94% { transform: translateX(3px); }
+            96% { transform: translateX(-1px); }
+            98% { transform: translateX(1px); }
+        }
+
+        /* ===== REVEAL ON SCROLL ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== CUSTOM CURSOR GLOW ===== */
+        .cursor-glow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 0, 64, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 99;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .platform-badges {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            section {
+                padding: 4rem 1.5rem;
+            }
+        }
+
+        /* ===== AUDIO TOGGLE ===== */
+        .audio-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 200;
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid #ff004044;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            color: #ff0040;
+        }
+
+        .audio-toggle:hover {
+            border-color: #ff004088;
+            box-shadow: 0 0 20px #ff004033;
+        }
+
+        /* ===== GLITCH OVERLAY (random flash) ===== */
+        .glitch-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 98;
+            pointer-events: none;
+            opacity: 0;
+            background: #ff004008;
+            mix-blend-mode: overlay;
+        }
+
+        .glitch-overlay.flash {
+            animation: glitchFlash 0.15s linear;
+        }
+
+        @keyframes glitchFlash {
+            0%   { opacity: 0; }
+            20%  { opacity: 0.5; }
+            40%  { opacity: 0; }
+            60%  { opacity: 0.3; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ENTER GATE (click to start audio & enter) -->
+    <div class="enter-gate" id="enterGate">
+        <h1>BELOW</h1>
+        <p>▸ Click anywhere to enter ◂</p>
+    </div>
+
+    <!-- Background music -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="assets/bgmusic-loop.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Fixed background -->
+    <div class="bg-fixed"></div>
+    <div class="bg-overlay"></div>
+
+    <!-- Scanlines CRT effect -->
+    <div class="scanlines"></div>
+
+    <!-- Floating ember particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Cursor glow -->
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <!-- Glitch flash overlay -->
+    <div class="glitch-overlay" id="glitchOverlay"></div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main-content">
+
+        <!-- HERO SECTION -->
+        <section class="hero">
+            <img src="assets/header.png" alt="Below — The Darkness Awaits" class="hero-image">
+            <div class="hero-content">
+                <h1 class="hero-title">BELOW</h1>
+                <p class="hero-subtitle">Descend into the unknown</p>
+                <p class="hero-tagline">A VR horror experience that will make you question what lurks in the shadows. Something is watching. Something is waiting. Something is... <em>below.</em></p>
+            </div>
+            <div class="scroll-indicator">
+                <span>Scroll if you dare</span>
+                <div class="scroll-arrow"></div>
+            </div>
+        </section>
+
+        <!-- ABOUT SECTION -->
+        <section id="about">
+            <h2 class="section-title reveal">What is Below?</h2>
+            <div class="about-grid">
+                <div class="about-text reveal">
+                    <p>
+                        <span class="neon-red">BELOW</span> is a spine-chilling VR horror game built for
+                        <span class="neon-highlight">Meta Quest</span>. You wake up in a decaying forest
+                        overrun with twisted trees and forgotten ruins. The air is thick. The ground trembles.
+                    </p>
+                    <br>
+                    <p>
+                        Explore the <span class="neon-orange">Danger Forest</span> — a quarantined zone where
+                        the boundary between our world and something far more sinister has shattered.
+                        Navigate treacherous paths, uncover dark secrets, and survive what lies beneath.
+                    </p>
+                    <br>
+                    <p>
+                        Every shadow hides a threat. Every sound could be your last warning.
+                        <span class="neon-red">Do not look behind you.</span>
+                    </p>
+                </div>
+                <div class="about-image-wrapper reveal">
+                    <img src="assets/gallery.png" alt="Below — Forest Overview">
+                </div>
+            </div>
+        </section>
+
+        <!-- WARNING BANNER -->
+        <div class="warning-banner reveal">
+            <p>⚠ THIS AREA HAS BEEN QUARANTINED — ENTER AT YOUR OWN RISK ⚠</p>
+        </div>
+
+        <!-- FEATURES SECTION -->
+        <section id="features">
+            <h2 class="section-title reveal">The Horrors That Await</h2>
+            <div class="features-grid">
+                <div class="feature-card reveal">
+                    <span class="feature-icon">🌲</span>
+                    <h3>Danger Forest</h3>
+                    <p>A quarantined forest where twisted trees claw at a blood-red sky. Monsters lurk behind every bark-stripped trunk.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <span class="feature-icon">👁️</span>
+                    <h3>Full VR Immersion</h3>
+                    <p>Built for Meta Quest. Feel the terror surround you in full 360° as the forest breathes down your neck.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <span class="feature-icon">🔦</span>
+                    <h3>Dynamic Darkness</h3>
+                    <p>Your flashlight is your only friend — and its battery is dying. Navigate pitch-black corridors of fear.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <span class="feature-icon">💀</span>
+                    <h3>Unspeakable Creatures</h3>
+                    <p>They were human once. Now they roam the forest, drawn to sound. Stay quiet. Stay alive.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <span class="feature-icon">🗝️</span>
+                    <h3>Dark Secrets</h3>
+                    <p>Discover what caused the quarantine. Piece together journals and clues before time runs out.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <span class="feature-icon">🎧</span>
+                    <h3>3D Spatial Audio</h3>
+                    <p>Hear every twig snap, every distant scream, every breath that isn't yours — all around you.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- GALLERY SECTION -->
+        <section class="gallery-section" id="gallery">
+            <h2 class="section-title reveal">Glimpse the Darkness</h2>
+            <div class="gallery-container">
+                <div class="gallery-item reveal">
+                    <img src="assets/header.png" alt="Below — Dead Forest Skyline">
+                    <div class="gallery-label">The Dead Forest — Dusk Falls</div>
+                </div>
+                <div class="gallery-item reveal">
+                    <img src="assets/background.png" alt="Below — Danger Forest Entrance">
+                    <div class="gallery-label">Danger Forest — Entry Gate</div>
+                </div>
+                <div class="gallery-item reveal">
+                    <img src="assets/gallery.png" alt="Below — Forest Overlook">
+                    <div class="gallery-label">The Overlook — No Way Back</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PLATFORM SECTION -->
+        <section class="platform-section" id="platform">
+            <h2 class="section-title reveal">Available On</h2>
+            <div class="platform-badges reveal">
+                <div class="platform-badge">
+                    <span class="icon">🥽</span>
+                    <span class="name">Meta Quest</span>
+                    <span class="status">Coming Soon</span>
+                </div>
+                <div class="platform-badge">
+                    <span class="icon">🎮</span>
+                    <span class="name">Meta Quest 3</span>
+                    <span class="status">Coming Soon</span>
+                </div>
+                <div class="platform-badge">
+                    <span class="icon">🖥️</span>
+                    <span class="name">SideQuest</span>
+                    <span class="status">Planned</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            <div class="footer-title">BELOW</div>
+            <p>© 2026 BelowTeam. All rights reserved.</p>
+            <p class="footer-warning">You have been warned.</p>
+        </footer>
+
+    </div>
+
+    <!-- Audio toggle button -->
+    <button class="audio-toggle" id="audioToggle" title="Toggle Music">🔊</button>
+
+    <script>
+        // ===== ENTER GATE =====
+        const gate = document.getElementById('enterGate');
+        const music = document.getElementById('bgMusic');
+        const toggleBtn = document.getElementById('audioToggle');
+
+        gate.addEventListener('click', () => {
+            gate.classList.add('hidden');
+            music.volume = 0.35;
+            music.play().catch(() => {});
+        });
+
+        // ===== AUDIO TOGGLE =====
+        let audioPlaying = true;
+        toggleBtn.addEventListener('click', () => {
+            if (audioPlaying) {
+                music.pause();
+                toggleBtn.textContent = '🔇';
+            } else {
+                music.play();
+                toggleBtn.textContent = '🔊';
+            }
+            audioPlaying = !audioPlaying;
+        });
+
+        // ===== FLOATING PARTICLES =====
+        const particlesContainer = document.getElementById('particles');
+        function createParticle() {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            const size = Math.random() * 4 + 1;
+            const isRed = Math.random() > 0.5;
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.background = isRed
+                ? `rgba(255, ${Math.floor(Math.random()*30)}, ${Math.floor(Math.random()*60)}, 0.8)`
+                : `rgba(255, ${Math.floor(150+Math.random()*100)}, 0, 0.6)`;
+            p.style.boxShadow = isRed
+                ? '0 0 6px #ff0040'
+                : '0 0 4px #ff6600';
+            p.style.animationDuration = (Math.random() * 8 + 6) + 's';
+            p.style.animationDelay = Math.random() * 5 + 's';
+            particlesContainer.appendChild(p);
+            setTimeout(() => p.remove(), 15000);
+        }
+        setInterval(createParticle, 400);
+
+        // ===== CURSOR GLOW =====
+        const cursorGlow = document.getElementById('cursorGlow');
+        document.addEventListener('mousemove', (e) => {
+            cursorGlow.style.left = e.clientX + 'px';
+            cursorGlow.style.top = e.clientY + 'px';
+        });
+
+        // ===== SCROLL REVEAL =====
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15 });
+        reveals.forEach(el => observer.observe(el));
+
+        // ===== RANDOM GLITCH FLASH =====
+        const glitchOverlay = document.getElementById('glitchOverlay');
+        function triggerGlitch() {
+            glitchOverlay.classList.add('flash');
+            setTimeout(() => glitchOverlay.classList.remove('flash'), 200);
+            setTimeout(triggerGlitch, Math.random() * 12000 + 5000);
+        }
+        setTimeout(triggerGlitch, 3000);
+
+        // ===== RANDOM FLICKER ON TITLE =====
+        const heroTitle = document.querySelector('.hero-title');
+        function randomFlicker() {
+            if (heroTitle) {
+                heroTitle.style.opacity = (Math.random() * 0.3 + 0.7).toString();
+                setTimeout(() => { heroTitle.style.opacity = '1'; }, 100);
+            }
+            setTimeout(randomFlicker, Math.random() * 8000 + 3000);
+        }
+        randomFlicker();
+    </script>
+
+</body>
+</html>
